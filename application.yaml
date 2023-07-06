@@ -1,2 +1,18 @@
 server:
-  port: 8888
+  port: 8085
+
+jpa:
+  defer-datasource-initialization: true
+  hibernate:
+    ddl-auto: none
+
+spring:
+  h2:
+    console.enabled: true
+  datasource:
+    url: jdbc:h2:mem:users
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
