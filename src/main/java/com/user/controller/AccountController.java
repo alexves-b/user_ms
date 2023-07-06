@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 
 public class AccountController {
-
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
