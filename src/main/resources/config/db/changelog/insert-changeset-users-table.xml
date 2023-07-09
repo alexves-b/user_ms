@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+        <databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+        <changeSet id="insert-into-users" author="Alex">
+        <insert tableName="users">
+        <column name="id" value="1"/>
+                <column name="is_deleted" value="false"/>
+                <column name="first_name" value="Artem Lebedev"/>
+                <column name="email" value="artem@mail.ru"/>
+                <column name="password" value="1234"/>
+                <column name="authority" value="Authority"/>
+                <column name="role" value="ROLE_USER"/>
+        </insert>
+        <insert tableName="users">
+                <column name="id" value="2"/>
+                <column name="is_deleted" value="false"/>
+                <column name="first_name" value="Alex Veselov"/>
+                <column name="email" value="alexves@bk.ru"/>
+                <column name="password" value="4321"/>
+                <column name="authority" value="Authority"/>
+                <column name="role" value="ROLE_ADMIN"/>
+        </insert>
+        </changeSet>
+
+        </databaseChangeLog>

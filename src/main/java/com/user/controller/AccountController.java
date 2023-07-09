@@ -5,27 +5,29 @@ import com.user.dto.account.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
+import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 
+@RestController
 public class AccountController {
+    @Autowired
+    UserServiceImpl userService;
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account",
-            method = RequestMethod.GET)
-    ResponseEntity<AccountSecureDto> account() {
-        return new ResponseEntity<AccountSecureDto>(HttpStatus.OK);
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),})
+    @GetMapping(value = "/api/v1/account")
+    @ResponseBody
+    ResponseEntity<AccountSecureDto> account(@RequestParam String email) {
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
@@ -47,7 +49,8 @@ public class AccountController {
     @RequestMapping(value = "/api/v1/account",
             method = RequestMethod.POST)
     ResponseEntity<AccountDto> createAccount() {
-        return new ResponseEntity<AccountDto>(HttpStatus.OK);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "get account when login", description = "Получение своих данных при входе на сайт", tags = {"Account service"})
@@ -67,7 +70,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
-            method = RequestMethod.GET)
+            method = RequestMethod.PUT)
     ResponseEntity<AccountDto> editAccountIfLogin() {
         return new ResponseEntity<AccountDto>(HttpStatus.OK);
     }
