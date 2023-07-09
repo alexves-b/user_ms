@@ -25,7 +25,6 @@ public class AccountDto {
     String photo;
 
     String profileCover;
-
     String about;
 
     String city;
@@ -53,9 +52,4 @@ public class AccountDto {
     LocalDateTime updatedOn;
 
     Timestamp deletionTimestamp;
-
-
-
-
-
 }
