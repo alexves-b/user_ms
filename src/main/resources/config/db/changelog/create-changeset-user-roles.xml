@@ -9,21 +9,14 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
-    <changeSet id="1688797489875-2" author="Alex">
-        <createTable tableName="users">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
-            </column>
-            <column name="is_deleted" type="BOOLEAN">
+    <changeSet id="1688797489875-3" author="Alex">
+        <createTable tableName="users_roles">
+            <column autoIncrement="true" name="user_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="first_name" type="VARCHAR(255)"/>
-            <column name="last_name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
-            <column name="password" type="VARCHAR(255)"/>
-            <column name="roles" type="VARCHAR(255)"/>
-            <column name="authorities" type="VARCHAR(255)"/>
+            <column autoIncrement="true" name="roles_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
-
     </changeSet>
 </databaseChangeLog>
