@@ -1,43 +1,54 @@
 package com.user.model;
-
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
-
 import javax.persistence.*;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
-@ToString
 @Table(name = "users")
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class User {
-    public User(Long id, boolean isDeleted, String firstName, String email, String password, String role, String authority) {
-        this.id = id;
-        this.isDeleted = isDeleted;
-        this.firstName = firstName;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.authority = authority;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", isDeleted=" + isDeleted +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", authorities=" + authorities +
+                '}';
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id")
     private Long id;
+
+    public User(boolean isDeleted, String firstName, String lastName, String email, String password,
+                List <RoleEntity> roles,List<AuthorityEntity> authorities) {
+        this.isDeleted = isDeleted;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+    }
+
     boolean isDeleted;
     String firstName;
+    String lastName;
     String email;
     String password;
-
-    String role;
-
-    String authority;
-
-
-
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    List <RoleEntity> roles;
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    List <AuthorityEntity> authorities;
 
     @Override
     public final boolean equals(Object o) {

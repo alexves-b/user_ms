@@ -11,9 +11,12 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 <preConditions>
         <runningAs  username="sa"/>
 </preConditions>
+        <include file="create-changeset-roles-and-authority.xml" relativeToChangelogFile="true"/>
+        <include file="insert-changeset-roles-table.xml" relativeToChangelogFile="true"/>
+        <include file="create-changeset-user-roles.xml" relativeToChangelogFile="true"/>
+        <include file="insert-changeset-user_roles-table.xml" relativeToChangelogFile="true"/>
+        <include file="insert-changeset-authority-table.xml" relativeToChangelogFile="true"/>
+        <include file="create-changeset-user-authority.xml" relativeToChangelogFile="true"/>
 <include file="create-changeset-users.xml" relativeToChangelogFile="true"/>
-<include file="insert-changeset-users-table.xml" relativeToChangelogFile="true"/>
-
-
 
 </databaseChangeLog>
