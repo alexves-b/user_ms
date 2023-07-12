@@ -1,20 +1,20 @@
 package com.user.controller;
 
 import com.user.dto.account.AccountDto;
-import com.user.dto.account.AccountSecureDto;
+import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
+import com.user.model.User;
 import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-
 @RestController
 public class AccountController {
     @Autowired
@@ -25,7 +25,6 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),})
     @GetMapping(value = "/api/v1/account")
-    @ResponseBody
     ResponseEntity<AccountSecureDto> account(@RequestParam String email) {
         return ResponseEntity.ok(userService.getUserByEmail(email));
     }
@@ -46,14 +45,15 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account",
-            method = RequestMethod.POST)
-    ResponseEntity<AccountDto> createAccount() {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<AccountDto> createAccount(@RequestBody User user) {
+       return ResponseEntity.ok(userService.createUser(user.isDeleted(),
+               user.getFirstName(),user.getLastName(),user.getEmail(),
+               user.getPassword(),null,null));
     }
-
-    @Operation(summary = "get account when login", description = "Получение своих данных при входе на сайт", tags = {"Account service"})
+    @Operation(summary = "get account when login",
+            description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
