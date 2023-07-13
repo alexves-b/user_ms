@@ -6,6 +6,7 @@ import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
 import com.user.model.User;
+import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,10 +16,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 public class AccountController {
     @Autowired
     UserServiceImpl userService;
+
+    @Autowired
+    UserRepository userRepository;
+
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -165,5 +173,42 @@ public class AccountController {
         return new ResponseEntity<PageAccountDto>(HttpStatus.OK);
     }
 
+    @Operation(summary = "Search users by name",
+            description = "Поиск пользователей по имени", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/search{username}",
+            method = RequestMethod.GET)
+    ResponseEntity<List<User>> getUserByName(@PathVariable(value = "username") String username) {
+        return userService.searchUser(username);
+    }
+
+    @Operation(summary = "Block/unblock user",
+            description = "блокировка / разблокировка пользователя", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/is-block",
+            method = RequestMethod.PUT)
+    ResponseEntity<Void> blockUser(@RequestParam(value = "id") Long id) {
+        userService.blockUser(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "all users count",
+            description = "всего пользователей", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/all-users",
+            method = RequestMethod.GET)
+    long getAllUsersCount() {
+        return userRepository.count();
+    }
 }
 
