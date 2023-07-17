@@ -10,14 +10,6 @@
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
 
     <changeSet id="1688797489875-1" author="Alex">
-
-        <createTable tableName="authorities">
-            <column autoIncrement="true" name="id" type="BIGINT">
-            </column>
-            <column name="authority" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
         <createTable tableName="roles">
             <column autoIncrement="true" name="id" type="BIGINT">
             </column>

@@ -7,16 +7,14 @@ jpa:
     ddl-auto: none
 
 spring:
-  h2:
-    console.enabled: true
   datasource:
-    url: jdbc:h2:mem:users
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
+    url: jdbc:postgresql://188.235.13.36:5432/users
+    username: selectel
+    password: selectel
+    driverClassName: org.postgresql.Driver
 
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     enabled: true
     drop-first: false
