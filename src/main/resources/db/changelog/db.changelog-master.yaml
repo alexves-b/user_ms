@@ -1,0 +1,43 @@
+databaseChangeLog:
+- changeSet:
+      id:  1
+      author: alex
+      labels: example-label
+      context: example-context
+      comment: example-comment
+      changes:
+       - createTable:
+            tableName:  users
+            columns:
+              - column:
+                  name:  id
+                  type:  int
+                  autoIncrement:  true
+                  constraints:
+                    primaryKey:  true
+                    nullable:  false
+              - column:
+                  name:  isDeleted
+                  type:  boolean
+                  constraints:
+                    nullable:  true
+              - column:
+                  name:  firstName
+                  type:  varchar(50)
+              - column:
+                  name:  lastName
+                  type:  varchar(50)
+              - column:
+                  name:  email
+                  type:  varchar(40)
+                  constraints:
+                    unique: true
+                    uniqueConstraintName: email_unique_key
+              - column:
+                  name: password
+                  type: varchar(50)
+              - column:
+                  name: roles
+                  type: varchar(30)
+
+
