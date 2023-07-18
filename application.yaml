@@ -7,18 +7,10 @@ jpa:
     ddl-auto: none
 
 spring:
-  h2:
-    console.enabled: true
   datasource:
-    url: jdbc:h2:mem:users
-    username: sa
-    password:
-    driverClassName: org.h2.Driver
+    spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
 
-  jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
-  liquibase:
-    enabled: true
-    drop-first: false
-    change-log: config\db\changelog\changelog.xml
-    default-schema: public
+liquibase:
+  enabled: true
+  drop-first: false
+  default-schema: public

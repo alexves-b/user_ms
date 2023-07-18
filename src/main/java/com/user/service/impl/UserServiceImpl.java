@@ -1,9 +1,7 @@
 package com.user.service.impl;
 
-import com.user.dto.account.AccountDto;
 import com.user.dto.secure.AccountSecureDto;
-import com.user.model.AuthorityEntity;
-import com.user.model.RoleEntity;
+import com.user.exception.EmailNotUnique;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.UserService;
@@ -11,9 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,32 +20,35 @@ public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
     @Override
     public AccountSecureDto getUserByEmail(String email) {
-        User user = userRepository.findUserByEmail(email);
-        if (user != null) {
-            System.out.println(user);
-            System.out.println(user.getAuthorities().toString());
-
-            return new AccountSecureDto(user.getId().toString(),
-                    user.isDeleted(), user.getFirstName(), user.getLastName(), user.getEmail(),
-                    user.getPassword(), Arrays.toString(user.getRoles().toString().toCharArray()),"342");
+        try {
+            User user = userRepository.findUserByEmail(email);
+            if (user != null) {
+                return new AccountSecureDto(user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getPassword());
+            } else {
+                throw new UsernameNotFoundException("user with email: " + email + " not found");
+            }
+        } catch (Exception ex) {
+            throw new UsernameNotFoundException("user with email: " + email + " not found");
         }
-        else return new AccountSecureDto();
-
     }
-
     @Override
-    public AccountDto createUser(boolean isDeleted, String firstName, String lastName,
-                                 String email, String password, List<RoleEntity> role, List<AuthorityEntity> authority) {
-        User user = new User(isDeleted,firstName,lastName,email,password,role,authority);
-        System.out.println(user);
-        userRepository.save(user);
-
-        return new AccountDto(user.getId().toString(),user.isDeleted(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPassword());
+    public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
+        try {
+            User user = new User(accountSecureDto);
+            user.setRoles("ROLE_USER");
+            userRepository.save(user);
+            user.setId(userRepository.save(user).getId());
+            System.out.println(user);
+            return (new AccountSecureDto(user.getFirstName(),
+                    user.getLastName(), user.getEmail(), user.getPassword()));
+        } catch (Exception exception) {
+            throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
+        }
     }
 
     @Override
     public ResponseEntity<List<User>> searchUser(String username) {
-
         if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         String[] fullName = username.split(" ");

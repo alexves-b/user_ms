@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="DatabaseMigrationSettings">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="db/changelog/" mainChangeLogDir="db/changelog/">
     <database-infos>
       <database-info>
-        <option name="enabled" value="true" />
         <dbms-id>h2</dbms-id>
+      </database-info>
+      <database-info>
+        <option name="enabled" value="true" />
+        <dbms-id>postgres</dbms-id>
       </database-info>
     </database-infos>
   </component>

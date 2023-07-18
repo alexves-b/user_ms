@@ -8,18 +8,14 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    <changeSet id="insert-into-user_roles" author="Alex">
-        <insert tableName="users_roles">
-            <column name="user_id" value="1"/>
-            <column name="roles_id" value="1"/>
-        </insert>
-        <insert tableName="users_roles">
-            <column name="user_id" value="1"/>
-            <column name="roles_id" value="2"/>
-        </insert>
-        <insert tableName="users_roles">
-            <column name="user_id" value="2"/>
-            <column name="roles_id" value="2"/>
-        </insert>
+
+    <changeSet id="1688797489875-1" author="Alex">
+        <createTable tableName="roles">
+            <column autoIncrement="true" name="id" type="BIGINT">
+            </column>
+            <column name="role" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 </databaseChangeLog>

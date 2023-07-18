@@ -17,9 +17,7 @@ public class SecurityConfig {
 				.csrf().disable()
 				.cors().disable()
 				.authorizeRequests()
-			.requestMatchers(toH2Console()).permitAll()
-				.antMatchers("/api/v1/account/**").permitAll()
-				.antMatchers("/h2-console/**").permitAll();
+				.antMatchers("/api/v1/account/**").permitAll();
 		return http.build();
 	}
 }

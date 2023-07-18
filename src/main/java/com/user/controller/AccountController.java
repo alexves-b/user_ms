@@ -5,6 +5,7 @@ import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
+import com.user.exception.ApplicationError;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
@@ -33,8 +34,8 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),})
     @GetMapping(value = "/api/v1/account")
-    ResponseEntity<AccountSecureDto> account(@RequestParam String email) {
-        return ResponseEntity.ok(userService.getUserByEmail(email));
+    AccountSecureDto account(@RequestParam String email) {
+        return userService.getUserByEmail(email);
     }
 
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
@@ -55,11 +56,10 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<AccountDto> createAccount(@RequestBody User user) {
-       return ResponseEntity.ok(userService.createUser(user.isDeleted(),
-               user.getFirstName(),user.getLastName(),user.getEmail(),
-               user.getPassword(),null,null));
+   public AccountSecureDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
+        return userService.createUser(accountSecureDto);
     }
+
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
