@@ -1,5 +1,6 @@
 package com.user.controller;
 
+import com.netflix.discovery.EurekaClient;
 import com.user.dto.account.AccountDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
@@ -22,6 +23,8 @@ import java.util.List;
 
 @RestController
 public class AccountController {
+    @Autowired
+    private EurekaClient eurekaClient;
     @Autowired
     UserServiceImpl userService;
 

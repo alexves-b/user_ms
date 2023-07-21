@@ -17,15 +17,15 @@ databaseChangeLog:
                     primaryKey:  true
                     nullable:  false
               - column:
-                  name:  isDeleted
+                  name:  is_deleted
                   type:  boolean
                   constraints:
                     nullable:  true
               - column:
-                  name:  firstName
+                  name:  first_name
                   type:  varchar(50)
               - column:
-                  name:  lastName
+                  name:  last_name
                   type:  varchar(50)
               - column:
                   name:  email
