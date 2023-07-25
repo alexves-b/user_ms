@@ -1,4 +1,4 @@
-package com.user;
+package com.user.confiig;
 import lombok.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
