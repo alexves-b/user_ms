@@ -24,6 +24,7 @@ public class User {
     String lastName;
     @Column(name = "email", unique = true)
     String email;
+    @Column(columnDefinition = "VARCHAR(768) CHARACTER SET utf8")
     String password;
     String roles;
 
