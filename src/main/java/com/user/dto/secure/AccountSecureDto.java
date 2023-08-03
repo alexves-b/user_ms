@@ -4,11 +4,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class AccountSecureDto {
-    public AccountSecureDto(String firstName, String lastName, String email, String password) {
+
+    public AccountSecureDto(String firstName, String lastName, String email, String password, String roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.roles = roles;
     }
     String id;
     boolean isDeleted;
