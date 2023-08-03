@@ -35,7 +35,7 @@ databaseChangeLog:
                     uniqueConstraintName: email_unique_key
               - column:
                   name: password
-                  type: varchar(50)
+                  type: varchar(255)
               - column:
                   name: roles
                   type: varchar(30)
