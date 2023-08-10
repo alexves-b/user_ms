@@ -14,7 +14,7 @@ public class PostgreConfig {
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://188.235.13.36:5432/users");
+        dataSource.setUrl("jdbc:postgresql://5.63.154.191:5432/users");
         dataSource.setUsername("selectel");
         dataSource.setPassword("selectel");
         return dataSource;
