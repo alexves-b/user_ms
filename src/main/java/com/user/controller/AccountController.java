@@ -60,7 +60,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-   public AccountSecureDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
+   public AccountResponseDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
         return userService.createUser(accountSecureDto);
     }
 

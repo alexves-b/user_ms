@@ -6,21 +6,22 @@ jpa:
   hibernate:
     ddl-auto: none
 
+spring.datasource:
+  platform: postgres
+  driverClassName: org.postgresql.Driver
+  url: jdbc:postgresql://5.63.154.191:5432/users
+  username: selectel
+  password: selectel
+
 spring:
   application:
-    name: users-micro-service
+    name: users_ms
   datasource:
     spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
-    platform: postgres
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://5.63.154.191:5432/users
-    username: selectel
-    password: selectel
   liquibase:
-      change-log: classpath:db/changelog/db.changelog-master.xml
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 liquibase:
-  changelog:
   enabled: true
   drop-first: false
   default-schema: public
@@ -29,7 +30,6 @@ eureka:
   client:
     service-url:
       defaultZone: http://5.63.154.191:8087/eureka
-
 kafka:
   consumer-enabled: true
   bootstrap-servers: 5.63.154.191:9092,5.63.154.191:9093
@@ -68,7 +68,7 @@ kafka:
   listener:
     poll-timeout: 1800000
     concurrency: 1
-      #      ack-mode: manual_immediate
+    #      ack-mode: manual_immediate
     # Получение каждой записи должно быть подтверждено
     ack-mode: record
   topics:

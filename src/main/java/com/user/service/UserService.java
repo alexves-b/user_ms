@@ -11,7 +11,7 @@ public interface UserService {
 
     AccountResponseDto getUserByEmail(String email);
 
-    AccountSecureDto createUser(AccountSecureDto accountSecureDto);
+    AccountResponseDto createUser(AccountSecureDto accountSecureDto);
 
     ResponseEntity<List<User>> searchUser(String username);
 

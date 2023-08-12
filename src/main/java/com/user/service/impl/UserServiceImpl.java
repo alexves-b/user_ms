@@ -18,77 +18,64 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	final UserRepository userRepository;
+    final UserRepository userRepository;
+    @Override
+    public AccountResponseDto getUserByEmail(String email) {
+        try {
+            User user = userRepository.findUserByEmail(email);
+            if (user != null) {
+                return new AccountResponseDto(new AccountSecureDto(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getPassword(), user.getRoles()),true);
+            } else {
+                throw new UsernameNotFoundException("user with email: " + email + " not found");
+            }
+        } catch (Exception ex) {
+            throw new UsernameNotFoundException("user with email: " + email + " not found");
+        }
+    }
+    @Override
+    public AccountResponseDto createUser(AccountSecureDto accountSecureDto) {
+        try {
+            User user = new User(accountSecureDto);
+            user.setRoles("ROLE_USER");
+            user.setId(userRepository.save(user).getId());
+            System.out.println(user);
+            return new AccountResponseDto (new AccountSecureDto(user.getId(),user.getFirstName(),
+                    user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()),true );
+        } catch (Exception exception) {
+            throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
+        }
+    }
 
-	@Override
-	public AccountResponseDto getUserByEmail(String email) {
-			User user = userRepository.findUserByEmail(email);
-			if (user != null) {
-				return new AccountResponseDto(new AccountSecureDto(
-						user.getId(),
-						user.getFirstName(),
-						user.getLastName(),
-						user.getEmail(),
-						user.getPassword(),
-						user.getRoles()),
-						true);
-			} else {
-				return new AccountResponseDto(
-						new AccountSecureDto(
-								null,
-								null,
-								null,
-								null,
-								null,
-								null),
-						false);
-			}
-	}
+    @Override
+    public ResponseEntity<List<User>> searchUser(String username) {
+        if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-	@Override
-	public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
-		try {
-			User user = new User(accountSecureDto);
-			user.setRoles("ROLE_USER");
-			userRepository.save(user);
-			user.setId(userRepository.save(user).getId());
-			System.out.println(user);
-			return (new AccountSecureDto(user.getId(), user.getFirstName(),
-					user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()));
-		} catch (Exception exception) {
-			throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
-		}
-	}
+        String[] fullName = username.split(" ");
+        String firstName = null;
+        String lastName = null;
 
-	@Override
-	public ResponseEntity<List<User>> searchUser(String username) {
-		if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (fullName.length < 2){
+            firstName = fullName[0];
+            lastName = fullName[0];
+        } else {
+            firstName = fullName[0];
+            lastName = fullName[1];
+        }
+        Specification<User> specification = Specification.where(null);
+        String finalFirstName = firstName;
+        String finalLastName = lastName;
+        specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("firstName"), String.format("%%%s%%", finalFirstName))));
+        specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lastName"), String.format("%%%s%%", finalLastName))));
+        return new ResponseEntity<>(userRepository.findAll(specification), HttpStatus.OK);
+    }
 
-		String[] fullName = username.split(" ");
-		String firstName = null;
-		String lastName = null;
-
-		if (fullName.length < 2) {
-			firstName = fullName[0];
-			lastName = fullName[0];
-		} else {
-			firstName = fullName[0];
-			lastName = fullName[1];
-		}
-		Specification<User> specification = Specification.where(null);
-		String finalFirstName = firstName;
-		String finalLastName = lastName;
-		specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("firstName"), String.format("%%%s%%", finalFirstName))));
-		specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lastName"), String.format("%%%s%%", finalLastName))));
-		return new ResponseEntity<>(userRepository.findAll(specification), HttpStatus.OK);
-	}
-
-	@Override
-	public void blockUser(Long id) {
+    @Override
+    public void blockUser(Long id) {
 //        Optional<User> user = userRepository.findById(id);
 //        user.ifPresent(() -> {
 //            user.get().setBlocked(!user.get().isBlocked());
 //            userRepository.save(user.get());
 //        });
-	}
+    }
 }

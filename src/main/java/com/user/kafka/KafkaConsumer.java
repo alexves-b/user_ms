@@ -14,7 +14,7 @@ public class KafkaConsumer {
 
 	private final String KEYWORD_FOR_CONSUMER = "WORLD";
 
-	@KafkaListener(topics = "${kafka.topics.auth}", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
+	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
 	public void listenGroupAuth(String message) {
 		log.info("◀ message '{}' received from group '{}'", message, groupId);
 	}
