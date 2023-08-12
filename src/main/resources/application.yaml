@@ -18,6 +18,8 @@ spring:
     name: users_ms
   datasource:
     spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 liquibase:
   enabled: true
@@ -28,3 +30,52 @@ eureka:
   client:
     service-url:
       defaultZone: http://5.63.154.191:8087/eureka
+kafka:
+  consumer-enabled: true
+  bootstrap-servers: 5.63.154.191:9092,5.63.154.191:9093
+  properties:
+    #      sasl:
+    #        jaas:
+    #          config: org.apache.kafka.common.security.plain.PlainLoginModule required username=${kafka_username:'admin'} password=${kafka_password:'admin-secret'};
+    #        mechanism: PLAIN
+    security:
+      #        protocol: SASL_PLAINTEXT
+      protocol: PLAINTEXT
+      # Тип, для которого определяем конкретные сериализаторы
+      spring.json.value.default.type: com.user.dto.JsonMessage.java
+      spring.deserializer.key.delegate.class: org.apache.kafka.common.serialization.StringDeserializer
+      spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+  consumer:
+    auto-offset-reset: earliest
+    group-id: ${spring.application.name}
+    # Сериализаторы для всех типов
+    key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    max-poll-records: 1
+    fetch-max-wait: 36000
+    enable-auto-commit: false
+  #      client-id: example
+
+  producer:
+    client-id: ${spring.application.name}
+    key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    # Очередь для исключений
+    value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    retries: 2
+
+  #    jaas:
+  #      enabled: true
+  listener:
+    poll-timeout: 1800000
+    concurrency: 1
+    #      ack-mode: manual_immediate
+    # Получение каждой записи должно быть подтверждено
+    ack-mode: record
+  topics:
+    auth: auth-topic
+    users: users-topic
+    posts: posts-topic
+    msg: msg-topic
+    notify: notify-topic
+    friends: friends-topic
+    admin: admin-topic

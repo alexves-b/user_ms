@@ -2,6 +2,7 @@ package com.user.controller;
 
 import com.netflix.discovery.EurekaClient;
 import com.user.dto.account.AccountDto;
+import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
@@ -36,8 +37,8 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),})
-    @GetMapping(value = "/api/v1/account")
-    AccountSecureDto account(@RequestParam String email) {
+    @GetMapping(value = "/api/v1/account", produces = {"application/json"})
+    AccountResponseDto account(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
 
@@ -59,7 +60,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-   public AccountSecureDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
+   public AccountResponseDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
         return userService.createUser(accountSecureDto);
     }
 

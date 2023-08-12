@@ -7,7 +7,6 @@ import javax.persistence.Table;
 
 @Data
 @AllArgsConstructor
-@Table(name = "authorities")
 public class Authority {
     String id;
     String authority;

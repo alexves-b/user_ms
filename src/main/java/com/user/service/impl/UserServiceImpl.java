@@ -1,5 +1,6 @@
 package com.user.service.impl;
 
+import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailNotUnique;
 import com.user.model.User;
@@ -19,12 +20,12 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     final UserRepository userRepository;
     @Override
-    public AccountSecureDto getUserByEmail(String email) {
+    public AccountResponseDto getUserByEmail(String email) {
         try {
             User user = userRepository.findUserByEmail(email);
             if (user != null) {
-                return new AccountSecureDto(user.getFirstName(), user.getLastName(), user.getEmail(),
-                        user.getPassword());
+                return new AccountResponseDto(new AccountSecureDto(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getPassword(), user.getRoles()),true);
             } else {
                 throw new UsernameNotFoundException("user with email: " + email + " not found");
             }
@@ -33,15 +34,14 @@ public class UserServiceImpl implements UserService {
         }
     }
     @Override
-    public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
+    public AccountResponseDto createUser(AccountSecureDto accountSecureDto) {
         try {
             User user = new User(accountSecureDto);
             user.setRoles("ROLE_USER");
-            userRepository.save(user);
             user.setId(userRepository.save(user).getId());
             System.out.println(user);
-            return (new AccountSecureDto(user.getFirstName(),
-                    user.getLastName(), user.getEmail(), user.getPassword()));
+            return new AccountResponseDto (new AccountSecureDto(user.getId(),user.getFirstName(),
+                    user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()),true );
         } catch (Exception exception) {
             throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
         }
