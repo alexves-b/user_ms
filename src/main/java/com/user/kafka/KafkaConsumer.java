@@ -14,12 +14,12 @@ public class KafkaConsumer {
 
 	private final String KEYWORD_FOR_CONSUMER = "WORLD";
 
-	@KafkaListener(topics = "${kafka.topics.auth}", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
+	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
 	public void listenGroupAuth(String message) {
 		log.info("◀ message '{}' received from group '{}'", message, groupId);
 	}
 //
-//	@KafkaListener(topics = "${kafka.topics.auth}", groupId = "${spring.application.name}", containerFactory = "filteredKafkaListenerContainerFactory")
+//	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "filteredKafkaListenerContainerFactory")
 //	public void listenFilteredMessage(String message) {
 //		log.info("◀ message '{}' received from group '{}' filtered by KEYWORD '{}'", message, groupId, KEYWORD_FOR_CONSUMER);
 //	}

@@ -25,36 +25,36 @@ public class KafkaTopicConfig {
 
 	@Bean
 	public NewTopic topicAuth() {
-		return new NewTopic("${kafka.topics.auth}", 2, (short) 2);
+		return new NewTopic("auth-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicUsers() {
-		return new NewTopic("${kafka.topics.users}", 2, (short) 2);
+		return new NewTopic("users-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicPosts() {
-		return new NewTopic("${kafka.topics.posts}", 2, (short) 2);
+		return new NewTopic("posts-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicMsg() {
-		return new NewTopic("${kafka.topics.msg}", 2, (short) 2);
+		return new NewTopic("msg-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicNotify() {
-		return new NewTopic("${kafka.topics.notify}", 2, (short) 2);
+		return new NewTopic("notify-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicFriends() {
-		return new NewTopic("${kafka.topics.friends}", 2, (short) 2);
+		return new NewTopic("friends-topic", 2, (short) 2);
 	}
 
 	@Bean
 	public NewTopic topicAdmin() {
-		return new NewTopic("${kafka.topics.admin}", 2, (short) 2);
+		return new NewTopic("admin-topic", 2, (short) 2);
 	}
 }
