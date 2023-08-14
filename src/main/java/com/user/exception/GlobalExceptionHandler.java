@@ -24,4 +24,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ApplicationError(HttpStatus.NOT_FOUND
                 .value(), e.getMessage()), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ApplicationError> catchEmailIsBlankException(EmailIsBlank e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.CONFLICT
+                .value(), e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+    }
 }

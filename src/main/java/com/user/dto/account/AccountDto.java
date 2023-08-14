@@ -1,7 +1,6 @@
 package com.user.dto.account;
 
 import com.user.dto.secure.Authority;
-import com.user.model.RoleEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 public class AccountDto {
-    public AccountDto(String id, boolean isDeleted, String firstName, String lastName, String email, String password, RoleEntity role) {
+    public AccountDto(String id, boolean isDeleted, String firstName, String lastName, String email, String password, String role) {
         this.id = id;
         this.isDeleted = isDeleted;
         this.firstName = firstName;
@@ -26,7 +25,7 @@ public class AccountDto {
     String lastName;
     String email;
     String password;
-    RoleEntity role;
+    String role;
     Authority authority;
     String phone;
     String photo;
