@@ -30,7 +30,6 @@ public class User {
     @Column(columnDefinition = "VARCHAR(768) CHARACTER SET utf8")
     String password;
     String roles;
-
     String authority;
     String phone;
     String photo;
@@ -43,10 +42,12 @@ public class User {
     LocalDateTime birthDate;
     String messagePermission;
     LocalDateTime lastOnlineTime;
-    boolean isOnline;
-    boolean isBlocked;
+    Boolean isOnline;
+    Boolean isBlocked;
     String emojiStatus;
     LocalDateTime createdOn;
     LocalDateTime updatedOn;
+
     Timestamp deletionTimestamp;
+
 }

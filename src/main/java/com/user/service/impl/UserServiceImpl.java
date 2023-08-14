@@ -2,6 +2,7 @@ package com.user.service.impl;
 
 import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
+import com.user.exception.EmailIsBlank;
 import com.user.exception.EmailNotUnique;
 import com.user.model.User;
 import com.user.repository.UserRepository;
@@ -14,18 +15,20 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    final UserRepository userRepository;
+    private final UserRepository userRepository;
+
     @Override
     public AccountResponseDto getUserByEmail(String email) {
         try {
             User user = userRepository.findUserByEmail(email);
             if (user != null) {
-                return new AccountResponseDto(new AccountSecureDto(user.getId(),user.getFirstName(), user.getLastName(), user.getEmail(),
-                        user.getPassword(), user.getRoles()),true);
+                return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),
+                        user.getPassword(), user.getRoles()), true);
             } else {
                 throw new UsernameNotFoundException("user with email: " + email + " not found");
             }
@@ -33,17 +36,33 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException("user with email: " + email + " not found");
         }
     }
+
     @Override
     public AccountResponseDto createUser(AccountSecureDto accountSecureDto) {
         try {
-            User user = new User(accountSecureDto);
-            user.setRoles("ROLE_USER");
-            user.setId(userRepository.save(user).getId());
-            System.out.println(user);
-            return new AccountResponseDto (new AccountSecureDto(user.getId(),user.getFirstName(),
-                    user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()),true );
-        } catch (Exception exception) {
+            if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
+                throw new EmailIsBlank("email is blank");
+            }
+
+            Optional<com.user.model.User> tempUser = Optional.ofNullable(userRepository.findUserByEmail(accountSecureDto.getEmail()));
+            if (tempUser.isEmpty()) {
+                System.out.println(accountSecureDto);
+                User user = new User(accountSecureDto);
+                user.setRoles("ROLE_USER");
+                userRepository.save(user);
+                System.out.println(user);
+                return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(),
+                        user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()), true);
+            } else {
+                throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
+            }
+        } catch (EmailNotUnique exception) {
             throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
+        } catch (EmailIsBlank exception) {
+            throw new EmailIsBlank("email is blank");
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return null;
         }
     }
 
@@ -55,7 +74,7 @@ public class UserServiceImpl implements UserService {
         String firstName = null;
         String lastName = null;
 
-        if (fullName.length < 2){
+        if (fullName.length < 2) {
             firstName = fullName[0];
             lastName = fullName[0];
         } else {

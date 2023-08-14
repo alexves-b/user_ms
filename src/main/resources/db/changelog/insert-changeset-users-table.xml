@@ -32,6 +32,7 @@
                 <column name="email" value="prohor@bk.ru"/>
                 <column name="password" value="7777"/>
                 <column name="roles" value="ROLE_ADMIN"/>
+
         </insert>
         </changeSet>
 
