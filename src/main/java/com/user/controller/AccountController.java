@@ -100,21 +100,6 @@ public class AccountController {
     ResponseEntity<AccountSearchDto> markAccountForDelete() {
         return new ResponseEntity<AccountSearchDto>(HttpStatus.OK);
     }
-
-
-
-    @Operation(summary = "Send message about friends birthdays", description = "Отправляет друзьям сообщение о наступившем дне рождении",
-            tags = {"Account service"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful operation"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account/birthdays",
-            method = RequestMethod.PUT)
-    ResponseEntity<String> sendMessageAboutFriendsBirthdays() {
-        return new ResponseEntity<String>(HttpStatus.OK);
-    }
-
     @Operation(summary = "Get account by id", description = "Получение данных по id", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),

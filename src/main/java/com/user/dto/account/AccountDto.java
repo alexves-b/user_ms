@@ -43,5 +43,5 @@ public class AccountDto {
     String emojiStatus;
     LocalDateTime createdOn;
     LocalDateTime updatedOn;
-    Timestamp deletionTimestamp;
+    LocalDateTime deletionTime;
 }
