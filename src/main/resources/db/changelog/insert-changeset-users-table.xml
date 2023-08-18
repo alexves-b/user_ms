@@ -15,7 +15,7 @@
                 <column name="last_name" value="Lebedev"/>
                 <column name="email" value="artem@mail.ru"/>
                 <column name="password" value="1234"/>
-                <column name="roles" value="ROLE_USER"/>
+                <column name="roles" value="ROLE_ADMIN"/>
         </insert>
         <insert tableName="users" >
                 <column name="id" autoIncrement="true"/>
