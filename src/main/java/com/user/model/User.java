@@ -47,7 +47,6 @@ public class User {
     String emojiStatus;
     LocalDateTime createdOn;
     LocalDateTime updatedOn;
-
-    Timestamp deletionTimestamp;
+    LocalDateTime deletionDate;
 
 }

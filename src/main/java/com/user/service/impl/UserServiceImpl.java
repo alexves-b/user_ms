@@ -67,6 +67,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public AccountResponseDto editUser(AccountSecureDto accountSecureDto) {
+        Optional <User> oldUser = Optional.ofNullable(userRepository.getReferenceById(accountSecureDto.getId()));
+        User tempUser = new User(accountSecureDto);
+        if (oldUser.isPresent() &&oldUser.get().getEmail().equalsIgnoreCase(tempUser.getEmail()) && oldUser.get().getId().equals(tempUser.getId())) {
+            //what we can change?
+            userRepository.save(oldUser.get());
+        }
+
+        return null;
+    }
+
+    @Override
     public ResponseEntity<List<User>> searchUser(String username) {
         if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 

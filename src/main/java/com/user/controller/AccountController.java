@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -38,7 +39,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),})
     @GetMapping(value = "/api/v1/account", produces = {"application/json"})
-    AccountResponseDto account(@RequestParam String email) {
+    AccountResponseDto getAccount(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
 
@@ -49,8 +50,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account",
             method = RequestMethod.PUT)
-    ResponseEntity<AccountDto> editAccount() {
-        return new ResponseEntity<AccountDto>(HttpStatus.OK);
+    AccountResponseDto editAccount(@RequestBody AccountSecureDto accountSecureDto) {
+        return userService.editUser(accountSecureDto);
     }
 
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})
@@ -72,7 +73,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.GET)
-    ResponseEntity<AccountDto> getAccountWhenLogin() {
+    ResponseEntity<AccountDto> getAccountWhenLogin(Principal principal) {
+        userService.getUserByEmail(principal.getName());
         return new ResponseEntity<AccountDto>(HttpStatus.OK);
     }
 

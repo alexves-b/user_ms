@@ -5,6 +5,7 @@ import com.user.dto.secure.AccountSecureDto;
 import com.user.model.User;
 import org.springframework.http.ResponseEntity;
 
+import java.security.Principal;
 import java.util.List;
 
 public interface UserService {
@@ -12,6 +13,9 @@ public interface UserService {
     AccountResponseDto getUserByEmail(String email);
 
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
+
+
+    AccountResponseDto editUser(AccountSecureDto accountSecureDto);
 
     ResponseEntity<List<User>> searchUser(String username);
 

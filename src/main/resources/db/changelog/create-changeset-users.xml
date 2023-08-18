@@ -44,7 +44,7 @@
             <column name="emoji_status" type="VARCHAR(255)"/>
             <column name="created_on" type="date"/>
             <column name="updated_on" type="date"/>
-            <column name="deletion_timestamp" type="date"/>
+            <column name="deletion_date" type="date"/>
 
 
 
