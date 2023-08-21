@@ -18,6 +18,11 @@ public interface UserService {
     AccountResponseDto editUser(AccountSecureDto accountSecureDto);
 
     ResponseEntity<List<User>> searchUser(String username);
+    User getUserById(Long id);
+
+    List <User> getAllUsers();
+
+    Long deleteUserById(Long id);
 
     void blockUser(Long id);
 

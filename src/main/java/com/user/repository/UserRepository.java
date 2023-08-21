@@ -12,5 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecificationExecutor<User> {
     User findUserByEmail(String email);
 
-    User getReferenceById(long id);
+    User getReferenceById(Long id);
+
+    Long deleteUserById(Long id);
 }

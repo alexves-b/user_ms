@@ -7,7 +7,6 @@ import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
-import com.user.exception.ApplicationError;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
@@ -73,9 +72,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.GET)
-    ResponseEntity<AccountDto> getAccountWhenLogin(Principal principal) {
-        userService.getUserByEmail(principal.getName());
-        return new ResponseEntity<AccountDto>(HttpStatus.OK);
+    AccountResponseDto getAccountWhenLogin(Principal principal) {
+        return userService.getUserByEmail(principal.getName());
     }
 
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
@@ -85,7 +83,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.PUT)
-    ResponseEntity<AccountDto> editAccountIfLogin() {
+    ResponseEntity<AccountDto> editAccountIfLogin(Principal principal) {
         return new ResponseEntity<AccountDto>(HttpStatus.OK);
     }
 
@@ -109,8 +107,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/{id}",
             method = RequestMethod.GET)
-    ResponseEntity<AccountDto> getAccountById() {
-        return new ResponseEntity<AccountDto>(HttpStatus.OK);
+    User getAccountById(Long id) {
+        return userService.getUserById(id);
     }
 
 
@@ -121,8 +119,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/{id}",
             method = RequestMethod.DELETE)
-    ResponseEntity<String> deleteAccountById() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    Long deleteAccountById(Long id) {
+        return userService.deleteUserById(id);
     }
 
     @Operation(summary = "Get all accounts, not work",
@@ -133,8 +131,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/unsupported",
             method = RequestMethod.GET)
-    ResponseEntity<String> getAllAccounts() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    List<User> getAllAccounts() {
+        return  userService.getAllUsers();
     }
 
 

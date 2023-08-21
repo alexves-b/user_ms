@@ -14,8 +14,9 @@ public class SecurityConfig {
 		http
 				.headers().frameOptions().disable()
 				.and()
+				.addFilterBefore(new CorsFilter(), org.springframework.web.filter.CorsFilter.class)
 				.csrf().disable()
-				.cors().disable()
+//				.cors().disable()
 				.authorizeRequests()
 				.antMatchers("/api/v1/account/**").permitAll();
 		return http.build();

@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
             throw new EmailIsBlank("email is blank");
         } catch (Exception exception) {
             exception.printStackTrace();
-            return null;
+            throw new RuntimeException(exception.getMessage());
         }
     }
 
@@ -74,7 +74,6 @@ public class UserServiceImpl implements UserService {
             //what we can change?
             userRepository.save(oldUser.get());
         }
-
         return null;
     }
 
@@ -99,6 +98,22 @@ public class UserServiceImpl implements UserService {
         specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("firstName"), String.format("%%%s%%", finalFirstName))));
         specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lastName"), String.format("%%%s%%", finalLastName))));
         return new ResponseEntity<>(userRepository.findAll(specification), HttpStatus.OK);
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        Optional <User> user = Optional.ofNullable(userRepository.getReferenceById(id));
+        return user.orElse(null);
+    }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public Long deleteUserById(Long id) {
+        return userRepository.deleteUserById(id);
     }
 
     @Override

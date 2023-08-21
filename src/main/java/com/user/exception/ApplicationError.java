@@ -1,15 +1,15 @@
 package com.user.exception;
 
 public class ApplicationError {
-        private int statusCode;
+        private int code;
         private String message;
 
-        public int getStatusCode() {
-            return statusCode;
+        public int getCode() {
+            return code;
         }
 
-        public void setStatusCode(int statusCode) {
-            this.statusCode = statusCode;
+        public void setCode(int code) {
+            this.code = code;
         }
 
         public String getMessage() {
@@ -23,8 +23,8 @@ public class ApplicationError {
         public ApplicationError() {
         }
 
-        public ApplicationError(int statusCode, String message) {
-            this.statusCode = statusCode;
+        public ApplicationError(int code, String message) {
+            this.code = code;
             this.message = message;
         }
 }
