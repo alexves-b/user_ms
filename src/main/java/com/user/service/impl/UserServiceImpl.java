@@ -1,5 +1,6 @@
 package com.user.service.impl;
 
+import com.user.dto.account.AccountDto;
 import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailIsBlank;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -67,10 +69,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AccountResponseDto editUser(AccountSecureDto accountSecureDto) {
-        Optional <User> oldUser = Optional.ofNullable(userRepository.getReferenceById(accountSecureDto.getId()));
-        User tempUser = new User(accountSecureDto);
-        if (oldUser.isPresent() &&oldUser.get().getEmail().equalsIgnoreCase(tempUser.getEmail()) && oldUser.get().getId().equals(tempUser.getId())) {
+    @Transactional
+    public AccountResponseDto editUser(AccountDto accountDto) {
+        Optional <User> oldUser = Optional.ofNullable(userRepository.getReferenceById(Long.parseLong(accountDto.getId())));
+        User tempUser = new User();
+        if (oldUser.isPresent() &&oldUser.get().getEmail().equalsIgnoreCase(tempUser.getEmail())
+                && oldUser.get().getId().equals(tempUser.getId())) {
+            //Изменение юзера мепим все один к 1.
+
             //what we can change?
             userRepository.save(oldUser.get());
         }

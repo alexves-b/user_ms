@@ -1,9 +1,11 @@
 package com.user.service;
 
+import com.user.dto.account.AccountDto;
 import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.model.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -15,7 +17,8 @@ public interface UserService {
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
 
 
-    AccountResponseDto editUser(AccountSecureDto accountSecureDto);
+    @Transactional
+    AccountResponseDto editUser(AccountDto accountDto);
 
     ResponseEntity<List<User>> searchUser(String username);
     User getUserById(Long id);
