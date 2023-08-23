@@ -1,4 +1,5 @@
 package com.user.model;
+import com.user.dto.account.AccountDto;
 import com.user.dto.account.StatusCodeType;
 import com.user.dto.secure.AccountSecureDto;
 import lombok.*;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

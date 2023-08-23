@@ -23,6 +23,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://192.168.84.187:8101", "http://5.63.154.191:8098"}, maxAge = 3600)
 public class AccountController {
     @Autowired
     private EurekaClient eurekaClient;
@@ -42,6 +43,7 @@ public class AccountController {
         return userService.getUserByEmail(email);
     }
 
+    //Возможность
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -49,8 +51,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account",
             method = RequestMethod.PUT)
-    AccountResponseDto editAccount(@RequestBody AccountSecureDto accountSecureDto) {
-        return userService.editUser(accountSecureDto);
+    AccountResponseDto editAccount(@RequestBody AccountDto accountDto) {
+        return userService.editUser(accountDto);
     }
 
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})

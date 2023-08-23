@@ -28,8 +28,14 @@ liquibase:
 
 eureka:
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://5.63.154.191:8087/eureka
+
+  instance:
+    hostname: 5.63.154.191
+
 kafka:
   consumer-enabled: true
   bootstrap-servers: 5.63.154.191:9092,5.63.154.191:9093
