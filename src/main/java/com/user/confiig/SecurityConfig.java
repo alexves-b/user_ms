@@ -28,14 +28,13 @@ import java.util.Arrays;
 @Configuration
 @EnableWebSecurity
 @PropertySource("secrets.properties")
-
 @AllArgsConstructor
 public class SecurityConfig {
 	private final UserServiceImpl userService;
 //	private final JwtRequestFilter jwtRequestFilter;
 
 	@Bean
-	public SecurityFilterChain filterChain(@NotNull HttpSecurity http) throws Exception {
+	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
 
 		http
 				.headers().frameOptions().disable()
