@@ -1,6 +1,5 @@
 package com.user.confiig;
 
-import com.user.confiig.CorsFilter;
 import com.user.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -35,14 +34,14 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
-
+		log.warn(" > I am in 'filterChain'");
 		http
 				.headers().frameOptions().disable()
 				.and().csrf().disable()
 				.cors().configurationSource(corsConfigurationSource())
-				.and().authorizeRequests()
-				.antMatchers("/api/v1/account/**").permitAll()
-				.anyRequest().permitAll()
+//				.and().authorizeRequests()
+//				.antMatchers("/api/v1/account/**").permitAll()
+//				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
@@ -51,6 +50,7 @@ public class SecurityConfig {
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
+		log.warn(" > I am in 'corsConfigurationSource()'");
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"));
@@ -70,7 +70,7 @@ public class SecurityConfig {
 
 
 	@Bean
-	public AuthenticationManager authenticationManager(@NotNull AuthenticationConfiguration authenticationConfiguration) throws Exception {
+	public AuthenticationManager authenticationManager(@NotNull @org.jetbrains.annotations.NotNull AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		return authenticationConfiguration.getAuthenticationManager();
 	}
 
