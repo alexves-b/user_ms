@@ -73,6 +73,7 @@ public class AccountController {
         return userService.createUser(accountSecureDto);
     }
 
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowedHeaders = "Access-Control-Allow-Origin")
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
