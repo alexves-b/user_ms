@@ -7,12 +7,16 @@ import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
 import com.user.dto.search.AccountSearchDto;
+import com.user.jwt_token.JwtTokenUtils;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +27,7 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
+@Slf4j
 @CrossOrigin(origins = {"http://192.168.84.187:8101", "http://5.63.154.191:8098"}, maxAge = 3600)
 public class AccountController {
     @Autowired
@@ -32,6 +37,9 @@ public class AccountController {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private JwtTokenUtils jwtTokenUtils;
 
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
@@ -74,7 +82,21 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.GET)
-    AccountResponseDto getAccountWhenLogin(Principal principal) {
+    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken, @NotNull Principal principal) {
+        log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
+        final String[] parts = bearerToken.split(" ");
+        final String jwtToken = parts[1];
+        final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
+        if (result) {
+            log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
+        }
+
+        try {
+            log.info("principal getname: " + principal.getName());
+        }
+        catch (Exception e){
+            log.error("principal is null");
+        }
         return userService.getUserByEmail(principal.getName());
     }
 
