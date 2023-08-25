@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,6 +37,8 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
 		log.warn(" > I am in 'filterChain'");
 		http
+				.headers().addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "http://5.63.154.191:8098"))
+				.and()
 				.headers().frameOptions().disable()
 				.and().csrf().disable()
 				.cors().configurationSource(corsConfigurationSource())
