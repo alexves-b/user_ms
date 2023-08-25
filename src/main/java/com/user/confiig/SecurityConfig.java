@@ -54,21 +54,21 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	public CorsFilter corsFilter() {
-		CorsConfiguration corsConfiguration = new CorsConfiguration();
-		corsConfiguration.setAllowCredentials(true);
-		corsConfiguration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
-		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin",
-				"Content-Type", "Accept", "Authorization", "Origin,Accept", "X-Requested-With",
-				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
-		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization",
-				"Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "OPTIONS"));
-		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-		return new CorsFilter(urlBasedCorsConfigurationSource);
-	}
+//	@Bean
+//	public CorsFilter corsFilter() {
+//		CorsConfiguration corsConfiguration = new CorsConfiguration();
+//		corsConfiguration.setAllowCredentials(true);
+//		corsConfiguration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
+//		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin",
+//				"Content-Type", "Accept", "Authorization", "Origin,Accept", "X-Requested-With",
+//				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
+//		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization",
+//				"Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+//		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "OPTIONS"));
+//		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+//		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+//		return new CorsFilter(urlBasedCorsConfigurationSource);
+//	}
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
@@ -86,6 +86,8 @@ public class SecurityConfig {
 				"Access-Control-Allow-Origin",
 				"Access-Control-Allow-Credentials",
 				"Authorization",
+				"authorization",
+				"content-type",
 				"Bearer",
 				"Bearer Token"));
 		configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
