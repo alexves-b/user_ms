@@ -45,6 +45,7 @@ public class SecurityConfig {
 				.cors().configurationSource(corsConfigurationSource())
 				.and().authorizeRequests()
 				.antMatchers("/api/v1/account/**").permitAll()
+				.antMatchers("/api/v1/account/me/**").permitAll()
 				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()
