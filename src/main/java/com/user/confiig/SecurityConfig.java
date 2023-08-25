@@ -90,7 +90,20 @@ public class SecurityConfig {
 				"content-type",
 				"Bearer",
 				"Bearer Token"));
-		configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+		configuration.setExposedHeaders(Arrays.asList(
+				"Origin",
+				"Accept",
+				"X-Requested-With",
+				"Content-Type",
+				"Access-Control-Request-Method",
+				"Access-Control-Request-Headers",
+				"Access-Control-Allow-Origin",
+				"Access-Control-Allow-Credentials",
+				"Authorization",
+				"authorization",
+				"content-type",
+				"Bearer",
+				"Bearer Token"));
 		configuration.setAllowCredentials(true);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
