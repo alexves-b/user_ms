@@ -39,11 +39,10 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
 		log.warn(" > I am in 'filterChain'");
 		http
-				.headers().addHeaderWriter(new StaticHeadersWriter("Access-Control-Allow-Origin", "http://5.63.154.191:8098"))
-				.and()
 				.headers().frameOptions().disable()
 				.and().csrf().disable()
-				.cors().configurationSource(corsConfigurationSource())
+				.cors()
+//				.cors().configurationSource(corsConfigurationSource())
 				.and().authorizeRequests()
 				.antMatchers("/api/v1/account/**").permitAll()
 				.antMatchers("/api/v1/account/me/**").permitAll()
@@ -70,47 +69,47 @@ public class SecurityConfig {
 //		return new CorsFilter(urlBasedCorsConfigurationSource);
 //	}
 
-	@Bean
-	CorsConfigurationSource corsConfigurationSource() {
-		log.warn(" > I am in 'corsConfigurationSource()'");
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList(
-				"Origin",
-				"Accept",
-				"X-Requested-With",
-				"Content-Type",
-				"Access-Control-Request-Method",
-				"Access-Control-Request-Headers",
-				"Access-Control-Allow-Origin",
-				"Access-Control-Allow-Credentials",
-				"Access-Control-Expose-Headers",
-				"Authorization",
-				"authorization",
-				"content-type",
-				"Bearer",
-				"Bearer Token"));
-		configuration.setExposedHeaders(Arrays.asList(
-				"Origin",
-				"Accept",
-				"X-Requested-With",
-				"Content-Type",
-				"Access-Control-Request-Method",
-				"Access-Control-Request-Headers",
-				"Access-Control-Allow-Origin",
-				"Access-Control-Allow-Credentials",
-				"Access-Control-Expose-Headers",
-				"Authorization",
-				"authorization",
-				"content-type",
-				"Bearer",
-				"Bearer Token"));
-		configuration.setAllowCredentials(true);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
+//	@Bean
+//	CorsConfigurationSource corsConfigurationSource() {
+//		log.warn(" > I am in 'corsConfigurationSource()'");
+//		CorsConfiguration configuration = new CorsConfiguration();
+//		configuration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
+//		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"));
+//		configuration.setAllowedHeaders(Arrays.asList(
+//				"Origin",
+//				"Accept",
+//				"X-Requested-With",
+//				"Content-Type",
+//				"Access-Control-Request-Method",
+//				"Access-Control-Request-Headers",
+//				"Access-Control-Allow-Origin",
+//				"Access-Control-Allow-Credentials",
+//				"Access-Control-Expose-Headers",
+//				"Authorization",
+//				"authorization",
+//				"content-type",
+//				"Bearer",
+//				"Bearer Token"));
+//		configuration.setExposedHeaders(Arrays.asList(
+//				"Origin",
+//				"Accept",
+//				"X-Requested-With",
+//				"Content-Type",
+//				"Access-Control-Request-Method",
+//				"Access-Control-Request-Headers",
+//				"Access-Control-Allow-Origin",
+//				"Access-Control-Allow-Credentials",
+//				"Access-Control-Expose-Headers",
+//				"Authorization",
+//				"authorization",
+//				"content-type",
+//				"Bearer",
+//				"Bearer Token"));
+//		configuration.setAllowCredentials(true);
+//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//		source.registerCorsConfiguration("/**", configuration);
+//		return source;
+//	}
 
 
 	@Bean
