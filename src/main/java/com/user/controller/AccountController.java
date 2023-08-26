@@ -27,7 +27,6 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@CrossOrigin(origins = {"http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"}, maxAge = 3600)
 public class AccountController {
     @Autowired
     private EurekaClient eurekaClient;
@@ -64,7 +63,7 @@ public class AccountController {
         return userService.editUser(accountDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.GET)
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -76,7 +75,7 @@ public class AccountController {
         return userService.createUser(accountSecureDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.GET)
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
@@ -96,7 +95,7 @@ public class AccountController {
         return userService.getUserByEmail(jwtTokenUtils.getAllClaimsFromToken(jwtToken).getSubject());
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.PUT)
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -109,7 +108,7 @@ public class AccountController {
         return new ResponseEntity<AccountDto>(HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.DELETE)
     @Operation(summary = "mark account for delete",
             description = "Помечает авторизованный аккаунт как удалённый" +
                     " и через заданное время стирает данные об аккаунте",
