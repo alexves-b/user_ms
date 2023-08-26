@@ -24,7 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.validation.constraints.NotNull;
-import java.util.Arrays;
 
 @Slf4j
 @Configuration
@@ -46,6 +45,8 @@ public class SecurityConfig {
 				.and().authorizeRequests()
 				.antMatchers("/api/v1/account/**").permitAll()
 				.antMatchers("/api/v1/account/me/**").permitAll()
+				.antMatchers("/me/**").permitAll()
+				.antMatchers("/account/me/**").permitAll()
 				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()

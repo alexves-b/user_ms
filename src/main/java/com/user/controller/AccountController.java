@@ -28,6 +28,7 @@ import java.util.List;
 @RestController
 @Slf4j
 public class AccountController {
+
     @Autowired
     private EurekaClient eurekaClient;
     @Autowired
@@ -63,7 +64,7 @@ public class AccountController {
         return userService.editUser(accountDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.GET)
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.GET)
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -75,14 +76,17 @@ public class AccountController {
         return userService.createUser(accountSecureDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.GET)
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.GET)
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account/me",
+    @RequestMapping(
+            value = "/api/v1/account/me",
+            consumes = {"application/json"},
+            produces = {"application/json"},
             method = RequestMethod.GET)
     AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
@@ -95,7 +99,7 @@ public class AccountController {
         return userService.getUserByEmail(jwtTokenUtils.getAllClaimsFromToken(jwtToken).getSubject());
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.PUT)
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.PUT)
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -108,7 +112,7 @@ public class AccountController {
         return new ResponseEntity<AccountDto>(HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization", methods = RequestMethod.DELETE)
+    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.DELETE)
     @Operation(summary = "mark account for delete",
             description = "Помечает авторизованный аккаунт как удалённый" +
                     " и через заданное время стирает данные об аккаунте",
