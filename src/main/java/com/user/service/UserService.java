@@ -16,7 +16,6 @@ public interface UserService {
 
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
 
-
     @Transactional
     AccountResponseDto editUser(AccountDto accountDto);
 

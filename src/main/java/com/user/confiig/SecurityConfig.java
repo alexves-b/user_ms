@@ -24,6 +24,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Configuration
@@ -32,7 +34,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class SecurityConfig {
 	private final UserServiceImpl userService;
-//	private final JwtRequestFilter jwtRequestFilter;
 
 	@Bean
 	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
@@ -40,8 +41,7 @@ public class SecurityConfig {
 		http
 				.headers().frameOptions().disable()
 				.and().csrf().disable()
-				.cors()
-//				.cors().configurationSource(corsConfigurationSource())
+				.cors().configurationSource(corsConfigurationSource())
 				.and().authorizeRequests()
 				.antMatchers("/api/v1/account/**").permitAll()
 				.antMatchers("/api/v1/account/me/**").permitAll()
@@ -53,64 +53,19 @@ public class SecurityConfig {
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
 	}
-
-//	@Bean
-//	public CorsFilter corsFilter() {
-//		CorsConfiguration corsConfiguration = new CorsConfiguration();
-//		corsConfiguration.setAllowCredentials(true);
-//		corsConfiguration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
-//		corsConfiguration.setAllowedHeaders(Arrays.asList("Origin", "Access-Control-Allow-Origin",
-//				"Content-Type", "Accept", "Authorization", "Origin,Accept", "X-Requested-With",
-//				"Access-Control-Request-Method", "Access-Control-Request-Headers"));
-//		corsConfiguration.setExposedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization",
-//				"Access-Control-Allow-Origin", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
-//		corsConfiguration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE", "OPTIONS"));
-//		UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
-//		urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
-//		return new CorsFilter(urlBasedCorsConfigurationSource);
-//	}
-
-//	@Bean
-//	CorsConfigurationSource corsConfigurationSource() {
-//		log.warn(" > I am in 'corsConfigurationSource()'");
-//		CorsConfiguration configuration = new CorsConfiguration();
-//		configuration.setAllowedOrigins(Arrays.asList("http://192.168.84.187:8101", "http://5.63.154.191:8098", "http://5.63.154.191:8084"));
-//		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"));
-//		configuration.setAllowedHeaders(Arrays.asList(
-//				"Origin",
-//				"Accept",
-//				"X-Requested-With",
-//				"Content-Type",
-//				"Access-Control-Request-Method",
-//				"Access-Control-Request-Headers",
-//				"Access-Control-Allow-Origin",
-//				"Access-Control-Allow-Credentials",
-//				"Access-Control-Expose-Headers",
-//				"Authorization",
-//				"authorization",
-//				"content-type",
-//				"Bearer",
-//				"Bearer Token"));
-//		configuration.setExposedHeaders(Arrays.asList(
-//				"Origin",
-//				"Accept",
-//				"X-Requested-With",
-//				"Content-Type",
-//				"Access-Control-Request-Method",
-//				"Access-Control-Request-Headers",
-//				"Access-Control-Allow-Origin",
-//				"Access-Control-Allow-Credentials",
-//				"Access-Control-Expose-Headers",
-//				"Authorization",
-//				"authorization",
-//				"content-type",
-//				"Bearer",
-//				"Bearer Token"));
-//		configuration.setAllowCredentials(true);
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", configuration);
-//		return source;
-//	}
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		log.info(" > Configuring CORS policy");
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("http://5.63.154.191:8098"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS"));
+		configuration.setAllowedHeaders(Arrays.asList("Origin", "Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Authorization"));
+		configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/api/v1/account/*", configuration);
+		return source;
+	}
 
 
 	@Bean
