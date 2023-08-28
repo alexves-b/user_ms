@@ -15,10 +15,8 @@ public interface UserService {
     AccountResponseDto getUserByEmail(String email);
 
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
-
-
     @Transactional
-    AccountResponseDto editUser(AccountDto accountDto);
+    User editUser(AccountDto accountDto);
 
     ResponseEntity<List<User>> searchUser(String username);
     User getUserById(Long id);

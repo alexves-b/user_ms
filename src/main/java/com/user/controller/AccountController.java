@@ -56,7 +56,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @PutMapping(value = "account")
-    AccountResponseDto editAccount(@RequestBody AccountDto accountDto) {
+    User editAccount(@RequestBody AccountDto accountDto) {
         return userService.editUser(accountDto);
     }
 
@@ -104,8 +104,9 @@ public class AccountController {
     @RequestMapping(value = "account/me",
             consumes = {"application/json", "authorization"},
             method = RequestMethod.PUT)
-    ResponseEntity<AccountDto> editAccountIfLogin(Principal principal) {
-        return new ResponseEntity<AccountDto>(HttpStatus.OK);
+    User editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,AccountDto accountDto) {
+
+        return userService.editUser(accountDto);
     }
 
     @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.DELETE)
@@ -120,9 +121,9 @@ public class AccountController {
     @RequestMapping(value = "account/me",
             method = RequestMethod.DELETE)
     ResponseEntity<AccountSearchDto> markAccountForDelete() {
+
         return new ResponseEntity<AccountSearchDto>(HttpStatus.OK);
     }
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
     @Operation(summary = "Get account by id", description = "Получение данных по id", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -130,7 +131,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "{id}/account",
             method = RequestMethod.GET)
-    User getAccountById(Long id) {
+    User getAccountById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
@@ -142,7 +143,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "{id}/account",
             method = RequestMethod.DELETE)
-    Long deleteAccountById(Long id) {
+    Long deleteAccountById(@PathVariable Long id) {
         return userService.deleteUserById(id);
     }
 

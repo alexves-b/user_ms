@@ -12,17 +12,12 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-    public User(AccountSecureDto accountSecureDto) {
-        this.firstName = accountSecureDto.getFirstName();
-        this.lastName = accountSecureDto.getLastName();
-        this.email = accountSecureDto.getEmail();
-        this.password = accountSecureDto.getPassword();
-    }
 
     Boolean isDeleted;
     String firstName;
@@ -50,5 +45,4 @@ public class User {
     LocalDateTime createdOn;
     LocalDateTime updatedOn;
     LocalDateTime deletionDate;
-
 }

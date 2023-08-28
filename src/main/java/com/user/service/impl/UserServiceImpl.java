@@ -1,5 +1,7 @@
 package com.user.service.impl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.dto.account.AccountDto;
 import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
@@ -9,6 +11,7 @@ import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,67 +23,51 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
     public AccountResponseDto getUserByEmail(String email) {
-        try {
-            User user = userRepository.findUserByEmail(email);
-            if (user != null) {
-                return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(),
-                        user.getPassword(), user.getRoles()), true);
-            } else {
-                throw new UsernameNotFoundException("user with email: " + email + " not found");
-            }
-        } catch (Exception ex) {
-            throw new UsernameNotFoundException("user with email: " + email + " not found");
-        }
+        User user = userRepository.findUserByEmail(email).orElseThrow(() ->
+                new UsernameNotFoundException("user with email: " + email + " not found"));
+        return new AccountResponseDto(new AccountSecureDto(user.getId(),
+                user.getFirstName(), user.getLastName(), user.getEmail(),
+                user.getPassword(), user.getRoles()), true);
     }
 
     @Override
     public AccountResponseDto createUser(AccountSecureDto accountSecureDto) {
-        try {
-            if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
-                throw new EmailIsBlank("email is blank");
-            }
-
-            Optional<com.user.model.User> tempUser = Optional.ofNullable(userRepository.findUserByEmail(accountSecureDto.getEmail()));
-            if (tempUser.isEmpty()) {
-                System.out.println(accountSecureDto);
-                User user = new User(accountSecureDto);
-                user.setRoles("ROLE_USER");
-                userRepository.save(user);
-                System.out.println(user);
-                return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(),
-                        user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()), true);
-            } else {
-                throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
-            }
-        } catch (EmailNotUnique exception) {
-            throw new EmailNotUnique("email " + accountSecureDto.getEmail() + " not unique");
-        } catch (EmailIsBlank exception) {
+        if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
             throw new EmailIsBlank("email is blank");
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            throw new RuntimeException(exception.getMessage());
         }
+        if (userRepository.existsByEmail(accountSecureDto.getEmail())) {
+            throw new EmailNotUnique("email: " + accountSecureDto.getEmail() + " not unique!");
+        }
+        log.info(accountSecureDto.toString());
+        User user = User.builder().email(accountSecureDto.getEmail())
+                .firstName(accountSecureDto.getFirstName())
+                .lastName(accountSecureDto.getLastName())
+                .password(accountSecureDto.getPassword())
+                .roles("ROLE_USER").build();
+        userRepository.save(user);
+        log.info(user.toString());
+        return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(),
+                user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()), true);
     }
 
     @Override
     @Transactional
-    public AccountResponseDto editUser(AccountDto accountDto) {
-        Optional <User> oldUser = Optional.ofNullable(userRepository.getReferenceById(Long.parseLong(accountDto.getId())));
-        User tempUser = new User();
-        if (oldUser.isPresent() &&oldUser.get().getEmail().equalsIgnoreCase(tempUser.getEmail())
-                && oldUser.get().getId().equals(tempUser.getId())) {
-            //Изменение юзера мепим все один к 1.
-
-            //what we can change?
-            userRepository.save(oldUser.get());
+    public User editUser(AccountDto accountDto) {
+        User oldUser = userRepository.findUserByEmail(accountDto.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException
+                        ("user with email: " + accountDto.getEmail() + " not found"));
+        if (oldUser.getEmail().equals(accountDto.getEmail())) {
+            oldUser = (User) objectMapper(accountDto);
+            userRepository.save(oldUser);
         }
-        return null;
+        return oldUser;
     }
 
     @Override
@@ -108,20 +95,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        Optional <User> user = Optional.ofNullable(userRepository.getReferenceById(id));
-        return user.orElse(null);
+        return userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("user with id: " + id + " not found"));
     }
-
     @Override
-    public List<User> getAllUsers() {
+    public List <User> getAllUsers() {
         return userRepository.findAll();
     }
-
     @Override
     public Long deleteUserById(Long id) {
-        return userRepository.deleteUserById(id);
+        return userRepository.deleteUserById(id).orElseThrow(() ->
+                new UsernameNotFoundException("user with id: " + id + " not found")).getId();
     }
-
     @Override
     public void blockUser(Long id) {
 //        Optional<User> user = userRepository.findById(id);
@@ -129,5 +114,10 @@ public class UserServiceImpl implements UserService {
 //            user.get().setBlocked(!user.get().isBlocked());
 //            userRepository.save(user.get());
 //        });
+    }
+    public static Object objectMapper(Object object) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        return mapper.convertValue(object, User.class);
     }
 }
