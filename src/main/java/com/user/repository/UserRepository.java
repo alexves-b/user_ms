@@ -7,12 +7,15 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecificationExecutor<User> {
-    User findUserByEmail(String email);
+    boolean existsByEmail(String email);
+    Optional <User> findUserByEmail(String email);
 
-    User getReferenceById(Long id);
+    Optional <User> findById(Long id);
 
-    Long deleteUserById(Long id);
+    Optional <User> deleteUserById(Long id);
 }
