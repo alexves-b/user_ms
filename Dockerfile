@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:ubi
+FROM adoptopenjdk/openjdk11:alpine-jre
 ARG JAR_FILE=target/usersMicroservice-0.0.1-SNAPSHOT.jar
 WORKDIR users
 EXPOSE 8085
