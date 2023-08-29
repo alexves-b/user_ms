@@ -33,6 +33,7 @@ public class UserServiceImpl implements UserService {
     public AccountResponseDto getUserByEmail(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("user with email: " + email + " not found"));
+        log.info("user with email: " + email + " not found");
         return new AccountResponseDto(new AccountSecureDto(user.getId(),
                 user.getFirstName(), user.getLastName(), user.getEmail(),
                 user.getPassword(), user.getRoles()), true);
@@ -44,9 +45,9 @@ public class UserServiceImpl implements UserService {
             throw new EmailIsBlank("email is blank");
         }
         if (userRepository.existsByEmail(accountSecureDto.getEmail())) {
-            throw new EmailNotUnique("email: " + accountSecureDto.getEmail() + " not unique!");
+            log.warn("email: " + accountSecureDto.getEmail() + " not unique!");
+           throw new EmailNotUnique("email: " + accountSecureDto.getEmail() + " not unique!");
         }
-        log.info(accountSecureDto.toString());
         User user = User.builder().email(accountSecureDto.getEmail())
                 .firstName(accountSecureDto.getFirstName())
                 .lastName(accountSecureDto.getLastName())

@@ -26,11 +26,11 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(@NotNull @org.jetbrains.annotations.NotNull HttpSecurity http) throws Exception {
 		log.warn(" > I am in 'filterChain'");
-
 		http
 				.headers()
 		.and().authorizeRequests()
 				.antMatchers("/api/v1/**").permitAll()
+				.antMatchers("/api/v1/account/me").permitAll()
 				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()

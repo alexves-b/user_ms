@@ -21,9 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Base64;
 import java.util.List;
 
 @RestController(value = "/api/v1/")
@@ -72,20 +76,20 @@ public class AccountController {
         return userService.createUser(accountSecureDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.GET)
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(
-            value = "account/me",
+    @GetMapping(value = "account/me",
             consumes = {"application/json"},
-            produces = {"application/json"},
-            method = RequestMethod.GET)
-    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
+            produces = {"application/json"})
+
+    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization")@AuthenticationPrincipal @NonNull String bearerToken ) {
+        log.info(bearerToken);
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
+
         final String[] parts = bearerToken.split(" ");
         final String jwtToken = parts[1];
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
@@ -95,18 +99,17 @@ public class AccountController {
         return userService.getUserByEmail(jwtTokenUtils.getAllClaimsFromToken(jwtToken).getSubject());
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.PUT)
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "account/me",
-            consumes = {"application/json", "authorization"},
+            consumes = {"application/json"},
             method = RequestMethod.PUT)
-    User editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,AccountDto accountDto) {
-
-        return userService.editUser(accountDto);
+    User editAccountIfLogin(Principal principal) {
+        System.out.println(principal.getName());
+        return new User();
     }
 
     @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.DELETE)
