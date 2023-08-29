@@ -92,11 +92,14 @@ public class AccountController {
 
         final String[] parts = bearerToken.split(" ");
         final String jwtToken = parts[1];
+
+
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
         if (result) {
             log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
+            log.info("jwtTokenUtils.getUsername(bearerToken) -" + jwtTokenUtils.getUsername(bearerToken));
         }
-        return userService.getUserByEmail(jwtTokenUtils.getAllClaimsFromToken(jwtToken).getSubject());
+        return userService.getUserByEmail(jwtTokenUtils.getUsername(bearerToken));
     }
 
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
