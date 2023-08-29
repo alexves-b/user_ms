@@ -86,9 +86,8 @@ public class AccountController {
         log.info(bearerToken);
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
 
-        final String[] parts = bearerToken.split(" ");
+        final String[] parts = bearerToken.split("\\s");
         final String jwtToken = parts[1];
-
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
         if (result) {
             log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
