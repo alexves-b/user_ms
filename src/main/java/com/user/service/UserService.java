@@ -17,8 +17,8 @@ public interface UserService {
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
     @Transactional
     User editUser(AccountDto accountDto);
+    List<AccountDto> searchUser(String username, String offset, String limit);
 
-    ResponseEntity<List<User>> searchUser(String username);
     User getUserById(Long id);
 
     List <User> getAllUsers();

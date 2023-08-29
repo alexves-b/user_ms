@@ -10,19 +10,18 @@ import com.user.exception.EmailNotUnique;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.UserService;
+import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -73,13 +72,15 @@ public class UserServiceImpl implements UserService {
         return oldUser;
     }
 
-    @Override
-    public ResponseEntity<List<User>> searchUser(String username) {
-        if (username == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+    @Override
+    public List<AccountDto> searchUser(String username, String offset, String limit) {
+        if (username.isBlank()) {
+            throw new UsernameNotFoundException("пусто");
+        }
         String[] fullName = username.split(" ");
-        String firstName = null;
-        String lastName = null;
+        String firstName;
+        String lastName;
 
         if (fullName.length < 2) {
             firstName = fullName[0];
@@ -88,12 +89,17 @@ public class UserServiceImpl implements UserService {
             firstName = fullName[0];
             lastName = fullName[1];
         }
-        Specification<User> specification = Specification.where(null);
-        String finalFirstName = firstName;
-        String finalLastName = lastName;
-        specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("firstName"), String.format("%%%s%%", finalFirstName))));
-        specification.or(((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lastName"), String.format("%%%s%%", finalLastName))));
-        return new ResponseEntity<>(userRepository.findAll(specification), HttpStatus.OK);
+        Specification<User> specification = Specification
+                .where(UserSpecification.findByFirstName(firstName))
+                .or(UserSpecification.findByFirstName(lastName));
+
+        Page<User> userList = userRepository.findAll(specification,
+                PageRequest.of(Integer.parseInt(offset), Integer.parseInt(limit)));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        return userList.stream()
+                .map(user -> objectMapper.convertValue(user, AccountDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
