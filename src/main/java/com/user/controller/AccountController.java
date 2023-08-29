@@ -93,7 +93,6 @@ public class AccountController {
         final String[] parts = bearerToken.split(" ");
         final String jwtToken = parts[1];
 
-
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
         if (result) {
             log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
