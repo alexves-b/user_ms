@@ -10,6 +10,7 @@ import com.user.exception.EmailNotUnique;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.UserService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,7 +26,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 

@@ -30,7 +30,7 @@ import java.security.Principal;
 import java.util.Base64;
 import java.util.List;
 
-@RestController(value = "/api/v1/")
+@RestController
 @Slf4j
 @CrossOrigin
 @RequiredArgsConstructor
@@ -41,36 +41,32 @@ public class AccountController {
     private final UserServiceImpl userService;
     private final UserRepository userRepository;
     private final JwtTokenUtils jwtTokenUtils;
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),})
-    @GetMapping(value = "account", produces = {"application/json"})
+    @GetMapping(value = "/api/v1/account", produces = {"application/json"})
     AccountResponseDto getAccount(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
-    //Возможность
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @PutMapping(value = "account")
+    @PutMapping(value = "/api/v1/account")
     User editAccount(@RequestBody AccountDto accountDto) {
         return userService.editUser(accountDto);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.GET)
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @PostMapping(value = "account",consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
    public AccountResponseDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
         return userService.createUser(accountSecureDto);
@@ -82,7 +78,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @GetMapping(value = "account/me",
+    @GetMapping(value = "/api/v1/account/me",
             consumes = {"application/json"},
             produces = {"application/json"})
 
@@ -106,7 +102,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/me",
+    @RequestMapping(value = "/api/v1/account/me",
             consumes = {"application/json"},
             method = RequestMethod.PUT)
     User editAccountIfLogin(Principal principal) {
@@ -123,7 +119,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/me",
+    @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.DELETE)
     ResponseEntity<AccountSearchDto> markAccountForDelete() {
 
@@ -134,7 +130,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "{id}/account",
+    @RequestMapping(value = "/api/v1/{id}/account",
             method = RequestMethod.GET)
     User getAccountById(@PathVariable Long id) {
         return userService.getUserById(id);
@@ -146,7 +142,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "{id}/account",
+    @RequestMapping(value = "/api/v1/{id}/account",
             method = RequestMethod.DELETE)
     Long deleteAccountById(@PathVariable Long id) {
         return userService.deleteUserById(id);
@@ -159,7 +155,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/unsupported",
+    @RequestMapping(value = "/api/v1/account/unsupported",
             method = RequestMethod.GET)
     List<User> getAllAccounts() {
         return  userService.getAllUsers();
@@ -174,7 +170,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/statistic",
+    @RequestMapping(value = "/api/v1/account/statistic",
             method = RequestMethod.GET)
     ResponseEntity<AccountStatisticRequestDto> getListAllAccounts() {
         return new ResponseEntity<AccountStatisticRequestDto>(HttpStatus.OK);
@@ -187,7 +183,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/search/statusCode",
+    @RequestMapping(value = "/api/v1/account/search/statusCode",
             method = RequestMethod.GET)
     ResponseEntity<PageAccountDto> getAccountByStatusCode() {
         return new ResponseEntity<PageAccountDto>(HttpStatus.OK);
@@ -200,7 +196,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/search{username}",
+    @RequestMapping(value = "/api/v1/account/search{username}",
             method = RequestMethod.GET)
     ResponseEntity<List<User>> getUserByName(@PathVariable(value = "username") String username) {
         return userService.searchUser(username);
@@ -213,7 +209,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/is-block",
+    @RequestMapping(value = "/api/v1/account/is-block",
             method = RequestMethod.PUT)
     ResponseEntity<Void> blockUser(@RequestParam(value = "id") Long id) {
         userService.blockUser(id);
@@ -227,7 +223,7 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "account/all-users",
+    @RequestMapping(value = "/api/v1/account/all-users",
             method = RequestMethod.GET)
     long getAllUsersCount() {
         return userRepository.count();
