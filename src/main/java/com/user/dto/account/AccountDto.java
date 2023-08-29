@@ -1,5 +1,6 @@
 package com.user.dto.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.user.dto.secure.Authority;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountDto {
 
     String id;

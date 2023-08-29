@@ -1,4 +1,5 @@
 package com.user.model;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.StatusCodeType;
 import com.user.dto.secure.AccountSecureDto;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

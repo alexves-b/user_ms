@@ -82,7 +82,7 @@ public class AccountController {
             consumes = {"application/json"},
             produces = {"application/json"})
 
-    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization")@AuthenticationPrincipal @NonNull String bearerToken ) {
+    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) {
         log.info(bearerToken);
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
 
@@ -91,8 +91,7 @@ public class AccountController {
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
         if (result) {
             log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
-            log.info("jwtTokenUtils.getUsername(bearerToken) -" + jwtTokenUtils.getUsername(bearerToken));
-        }
+         }
         return userService.getUserByEmail(jwtTokenUtils.getUsername(bearerToken));
     }
 
@@ -188,17 +187,18 @@ public class AccountController {
         return new ResponseEntity<PageAccountDto>(HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
     @Operation(summary = "Search users by name",
             description = "Поиск пользователей по имени", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account/search{username}",
+    @RequestMapping(value = "/api/v1/account/search",
             method = RequestMethod.GET)
-    ResponseEntity<List<User>> getUserByName(@PathVariable(value = "username") String username) {
-        return userService.searchUser(username);
+    List<AccountDto> getUserByName(@RequestParam(name = "username") String username,
+                                   @RequestParam(name = "offset", defaultValue = "-1") String offset,
+                                   @RequestParam(name = "limit", defaultValue = "3") String limit) {
+        return userService.searchUser(username, offset, limit);
     }
 
     @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
