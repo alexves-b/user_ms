@@ -79,9 +79,9 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @GetMapping(value = "/api/v1/account/me",
-            consumes = {"application/json"},
-            produces = {"application/json"})
+    @GetMapping(value = "/api/v1/account/me")
+        //            consumes = {"application/json"},
+        //            produces = {"application/json"}
 
     AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) {
         log.info(bearerToken);
