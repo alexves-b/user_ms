@@ -1,5 +1,7 @@
 package com.user.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.netflix.discovery.EurekaClient;
 import com.user.dto.account.AccountDto;
 import com.user.dto.response.AccountResponseDto;
@@ -18,12 +20,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
+import org.json.JSONWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -32,6 +37,7 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -87,7 +93,12 @@ public class AccountController {
         log.info(bearerToken);
         final String[] parts = bearerToken.split("\\s");
         final String jwtToken = parts[1];
-        log.info(Arrays.toString(jwtTokenUtils.decodeJWTToken(jwtToken)));
+        log.info(jwtTokenUtils.decodeJWTToken(jwtToken));
+        ObjectMapper mapper = new ObjectMapper();
+
+        Map <String,String> obj = mapper.readValue(jwtTokenUtils.decodeJWTToken(jwtToken), Map.class);
+        String email = obj.get("sub");
+        return userService.getUserByEmail(email);
         /*
         try {
 
@@ -97,9 +108,8 @@ public class AccountController {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-            log.info(decoderToken); */
-        return new AccountResponseDto(new AccountSecureDto(0L,"vasya",
-                "Pupkin","test@test.comm","123","ROLE_USER"),false);
+            log.info(decoderToken);  return new AccountResponseDto(new AccountSecureDto(us,"vasya",
+                "Pupkin","test@test.comm","123","ROLE_USER"),false); */
     }
 
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
