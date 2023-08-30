@@ -89,8 +89,10 @@ public class AccountController {
         final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
         if (result) {
             log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
+            return userService.getUserByEmail(jwtTokenUtils.getUsername(bearerToken));
          }
-        return userService.getUserByEmail(jwtTokenUtils.getUsername(bearerToken));
+        return new AccountResponseDto(new AccountSecureDto(0L,"vasya",
+                "Pupkin","test@test.comm","123","ROLE_USER"),false);
     }
 
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
