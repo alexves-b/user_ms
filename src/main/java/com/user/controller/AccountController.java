@@ -81,22 +81,24 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) throws Exception {
         log.info(bearerToken);
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
         final String[] parts = bearerToken.split("\\s");
         final String jwtToken = parts[1];
         String decoderToken = "";
-        
+        log.info(jwtTokenUtils.decodeJWTToken(jwtToken));
+        /*
         try {
+
             decoderToken = jwtTokenUtils
                     .decodeJWTToken(jwtToken,
                             "aXH6JwuebH3qnxLVWQMXxHHg8euc7pkZ246yUJsMFsLHGGhXzCdanoV3HNiTgZf7");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-            log.info(decoderToken);
+            log.info(decoderToken); */
         return new AccountResponseDto(new AccountSecureDto(0L,"vasya",
                 "Pupkin","test@test.comm","123","ROLE_USER"),false);
     }
