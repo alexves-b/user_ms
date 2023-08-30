@@ -32,10 +32,13 @@ public class SecurityConfig {
 		log.warn(" > I am in 'filterChain'");
 		http
 				.headers()
-		.and().authorizeRequests()
+				.frameOptions().disable()
+				.and().csrf().disable()
+				.authorizeRequests()
 				.antMatchers("/api/v1/account/me").permitAll()
-				.antMatchers("/api/v1/**").permitAll()
 				.antMatchers("/api/v1/account/**").permitAll()
+				.antMatchers("/api/v1/account**").permitAll()
+				.antMatchers("/api/v1/**").permitAll()
 				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()

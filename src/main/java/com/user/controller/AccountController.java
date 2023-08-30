@@ -69,6 +69,7 @@ public class AccountController {
     @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
    public AccountResponseDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
+
         return userService.createUser(accountSecureDto);
     }
 
