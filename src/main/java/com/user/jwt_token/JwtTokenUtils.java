@@ -12,7 +12,7 @@ import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 @Component
 public class JwtTokenUtils{
 
-    public static String decodeJWTToken(String token) {
+    public String decodeJWTToken(String token) {
         Base64.Decoder decoder = Base64.getUrlDecoder();
 
         String[] chunks = token.split("\\.");
