@@ -29,6 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
@@ -84,11 +85,9 @@ public class AccountController {
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) throws Exception {
         log.info(bearerToken);
-        log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
         final String[] parts = bearerToken.split("\\s");
         final String jwtToken = parts[1];
-        String decoderToken = "";
-        log.info(jwtTokenUtils.decodeJWTToken(jwtToken));
+        log.info(Arrays.toString(jwtTokenUtils.decodeJWTToken(jwtToken)));
         /*
         try {
 
