@@ -1,82 +1,46 @@
 package com.user.jwt_token;
 
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
 
-import io.jsonwebtoken.*;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+public class JwtTokenUtils{
 
-@Slf4j
-@Component
-public class JwtTokenUtils {
+    public static String decodeJWTToken(String token) {
+        Base64.Decoder decoder = Base64.getUrlDecoder();
 
-    @Value("${jwt.secret}")
-    private String secret;
+        String[] chunks = token.split("\\.");
 
-//	@Value("${jwt.lifetime}")
-//	private Duration jwtLifetime;
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
 
-
-
-    @NonNull
-    private static Map<String, Object> collectClaims(@NonNull CustomUserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        List<String> rolesList = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        claims.put("roles", rolesList);
-        claims.put("userId", userDetails.getId());
-        claims.put("firstName", userDetails.getFirstName());
-        claims.put("lastName", userDetails.getLastName());
-        return claims;
+        return header + " " + payload;
     }
 
-    public String getUsername(String token) {
-        return getAllClaimsFromToken(token).getSubject();
-    }
+    public String decodeJWTToken(String token, String secretKey) throws Exception {
+        Base64.Decoder decoder = Base64.getUrlDecoder();
 
-    public List<String> getRoles(String token) {
-        return getClaimFromToken(token, (Function<Claims, List<String>>) claims -> claims.get("roles", List.class));
-    }
+        String[] chunks = token.split("\\.");
 
-    public  <T> T getClaimFromToken(String token, @NonNull Function<Claims, T> claimsResolver) {
-        Claims claims = getAllClaimsFromToken(token);
-        return claimsResolver.apply(claims);
-    }
+        String header = new String(decoder.decode(chunks[0]));
+        String payload = new String(decoder.decode(chunks[1]));
 
-    public Claims getAllClaimsFromToken(String token) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
+        String tokenWithoutSignature = chunks[0] + "." + chunks[1];
+        String signature = chunks[2];
+
+        SignatureAlgorithm sa = HS512;
+        SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), sa.getJcaName());
+
+        DefaultJwtSignatureValidator validator = new DefaultJwtSignatureValidator(sa, secretKeySpec);
+
+        if (!validator.isValid(tokenWithoutSignature, signature)) {
+            throw new Exception("Could not verify JWT token integrity!");
         }
-    }
 
-    public Boolean isJwtTokenIsNotExpired(String bearerToken) {
-        try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(bearerToken);
-            return true;
-        } catch (MalformedJwtException e) {
-            log.error("Invalid JWT token: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            log.error("JWT token is expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("JWT token is unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty: {}", e.getMessage());
-        }
-        return false;
+        return header + " " + payload;
     }
 }
