@@ -11,6 +11,7 @@ import com.user.jwt_token.JwtTokenUtils;
 import com.user.model.User;
 import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -25,6 +26,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Base64;
@@ -80,18 +82,21 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
-    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) {
+    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) throws Exception {
         log.info(bearerToken);
         log.info(" i am in 'AccountResponseDto getAccountWhenLogin(@NotNull Principal principal)'");
-
         final String[] parts = bearerToken.split("\\s");
         final String jwtToken = parts[1];
-        log.info("jwtToken - " + jwtToken);
-        final Boolean result = jwtTokenUtils.isJwtTokenIsNotExpired(jwtToken);
-        if (result) {
-            log.info("claims from token: " + jwtTokenUtils.getAllClaimsFromToken(jwtToken).toString());
-            return userService.getUserByEmail(jwtTokenUtils.getUsername(bearerToken));
-         }
+        String decoderToken = "";
+        
+        try {
+            decoderToken = jwtTokenUtils
+                    .decodeJWTToken(jwtToken,
+                            "aXH6JwuebH3qnxLVWQMXxHHg8euc7pkZ246yUJsMFsLHGGhXzCdanoV3HNiTgZf7");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+            log.info(decoderToken);
         return new AccountResponseDto(new AccountSecureDto(0L,"vasya",
                 "Pupkin","test@test.comm","123","ROLE_USER"),false);
     }
