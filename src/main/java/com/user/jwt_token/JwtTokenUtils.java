@@ -2,12 +2,14 @@ package com.user.jwt_token;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.DefaultJwtSignatureValidator;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
 import static io.jsonwebtoken.SignatureAlgorithm.HS512;
 
+@Component
 public class JwtTokenUtils{
 
     public static String decodeJWTToken(String token) {
