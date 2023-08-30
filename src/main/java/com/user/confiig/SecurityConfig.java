@@ -33,8 +33,9 @@ public class SecurityConfig {
 		http
 				.headers()
 		.and().authorizeRequests()
-				.antMatchers("/api/v1/**").permitAll()
 				.antMatchers("/api/v1/account/me").permitAll()
+				.antMatchers("/api/v1/**").permitAll()
+				.antMatchers("/api/v1/account/**").permitAll()
 				.anyRequest().permitAll()
 				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 				.and().exceptionHandling()
