@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
     public AccountResponseDto getUserByEmail(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("user with email: " + email + " not found"));
-        log.info("user with email: " + email + " not found");
         return new AccountResponseDto(new AccountSecureDto(user.getId(),
                 user.getFirstName(), user.getLastName(), user.getEmail(),
                 user.getPassword(), user.getRoles()), true);

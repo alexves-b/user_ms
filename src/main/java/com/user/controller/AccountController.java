@@ -103,7 +103,7 @@ public class AccountController {
     @RequestMapping(value = "/api/v1/account/me",
             consumes = {"application/json"},
             method = RequestMethod.PUT)
-    User editAccountIfLogin(Principal principal) {
+    User editAccountIfLogin(@AuthenticationPrincipal Principal principal) {
         System.out.println(principal.getName());
         return new User();
     }
