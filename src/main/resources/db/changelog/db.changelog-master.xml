@@ -10,4 +10,5 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
 </preConditions>
         <include file="create-changeset-users.xml" relativeToChangelogFile="true"/>
         <include file="insert-changeset-users-table.xml" relativeToChangelogFile="true"/>
+        <include file="add-column-to-users.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

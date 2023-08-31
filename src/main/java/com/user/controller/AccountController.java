@@ -1,43 +1,26 @@
 package com.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.netflix.discovery.EurekaClient;
 import com.user.dto.account.AccountDto;
 import com.user.dto.response.AccountResponseDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.page.PageAccountDto;
-import com.user.dto.search.AccountSearchDto;
-import com.user.jwt_token.JwtTokenUtils;
 import com.user.model.User;
-import com.user.repository.UserRepository;
 import com.user.service.impl.UserServiceImpl;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.json.JSONObject;
-import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -48,8 +31,7 @@ public class AccountController {
 
     private final EurekaClient eurekaClient;
     private final UserServiceImpl userService;
-    private final UserRepository userRepository;
-    private final JwtTokenUtils jwtTokenUtils;
+
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -59,7 +41,6 @@ public class AccountController {
     AccountResponseDto getAccount(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
-
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -78,7 +59,6 @@ public class AccountController {
     @PostMapping(value = "/api/v1/account",consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
    public AccountResponseDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
-
         return userService.createUser(accountSecureDto);
     }
 
@@ -89,30 +69,13 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) throws Exception {
-        log.info(bearerToken);
-        final String[] parts = bearerToken.split("\\s");
-        final String jwtToken = parts[1];
-        log.info(jwtTokenUtils.decodeJWTToken(jwtToken));
-        ObjectMapper mapper = new ObjectMapper();
-
-        Map <String,String> obj = mapper.readValue(jwtTokenUtils.decodeJWTToken(jwtToken), Map.class);
-        String email = obj.get("sub");
+    AccountResponseDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) {
+       String email = userService.getEmailFromBearerToken(bearerToken);
         return userService.getUserByEmail(email);
-        /*
-        try {
-
-            decoderToken = jwtTokenUtils
-                    .decodeJWTToken(jwtToken,
-                            "aXH6JwuebH3qnxLVWQMXxHHg8euc7pkZ246yUJsMFsLHGGhXzCdanoV3HNiTgZf7");
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-            log.info(decoderToken);  return new AccountResponseDto(new AccountSecureDto(us,"vasya",
-                "Pupkin","test@test.comm","123","ROLE_USER"),false); */
     }
 
-    @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта", tags = {"Account service"})
+    @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта",
+            tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -120,13 +83,13 @@ public class AccountController {
     @RequestMapping(value = "/api/v1/account/me",
             consumes = {"application/json"},
             method = RequestMethod.PUT)
-    User editAccountIfLogin(@AuthenticationPrincipal Principal principal) {
-        System.out.println(principal.getName());
-        return new User();
+    User editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
+                            @RequestBody AccountDto accountDto ) {
+        String email = userService.getEmailFromBearerToken(bearerToken);
+        return userService.editUser(accountDto,email);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true", allowedHeaders = "Authorization, Access-Control-Allow-Origin", methods = RequestMethod.DELETE)
-    @Operation(summary = "mark account for delete",
+   @Operation(summary = "mark account for delete",
             description = "Помечает авторизованный аккаунт как удалённый" +
                     " и через заданное время стирает данные об аккаунте",
             tags = {"Account service"})
@@ -136,9 +99,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
             method = RequestMethod.DELETE)
-    ResponseEntity<AccountSearchDto> markAccountForDelete() {
-
-        return new ResponseEntity<AccountSearchDto>(HttpStatus.OK);
+    void markAccountForDelete(@RequestHeader("Authorization") @NonNull String bearerToken) {
+        userService.markForDeleteUserAfterThirtyDaysByToken(bearerToken);
     }
     @Operation(summary = "Get account by id", description = "Получение данных по id", tags = {"Account service"})
     @ApiResponses(value = {
@@ -151,7 +113,7 @@ public class AccountController {
         return userService.getUserById(id);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+
     @Operation(summary = "Delete account by id", description = "Полность удаляет аккаунт из базы по id", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -163,7 +125,7 @@ public class AccountController {
         return userService.deleteUserById(id);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+
     @Operation(summary = "Get all accounts, not work",
             description = "Позволяет получить все аккаунты, не реализован", tags = {"Account service"})
     @ApiResponses(value = {
@@ -191,7 +153,7 @@ public class AccountController {
         return new ResponseEntity<AccountStatisticRequestDto>(HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+
     @Operation(summary = "Get Account By statusCode",
             description = "Позволяет получать аккаунты относительно запрашиваемого статуса", tags = {"Account service"})
     @ApiResponses(value = {
@@ -200,8 +162,8 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/search/statusCode",
             method = RequestMethod.GET)
-    ResponseEntity<PageAccountDto> getAccountByStatusCode() {
-        return new ResponseEntity<PageAccountDto>(HttpStatus.OK);
+    List <AccountDto> getAccountByStatusCode() {
+        return new ArrayList<AccountDto>();
     }
 
     @Operation(summary = "Search users by name",
@@ -218,7 +180,7 @@ public class AccountController {
         return userService.searchUser(username, offset, limit);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+
     @Operation(summary = "Block/unblock user",
             description = "блокировка / разблокировка пользователя", tags = {"Account service"})
     @ApiResponses(value = {
@@ -227,12 +189,11 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/is-block",
             method = RequestMethod.PUT)
-    ResponseEntity<Void> blockUser(@RequestParam(value = "id") Long id) {
+    void blockUser(@RequestParam(value = "id") Long id) {
         userService.blockUser(id);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://5.63.154.191:8098", allowCredentials = "true")
+
     @Operation(summary = "all users count",
             description = "всего пользователей", tags = {"Account service"})
     @ApiResponses(value = {
@@ -242,7 +203,7 @@ public class AccountController {
     @RequestMapping(value = "/api/v1/account/all-users",
             method = RequestMethod.GET)
     long getAllUsersCount() {
-        return userRepository.count();
+        return userService.getUserCount();
     }
 }
 

@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AccountDto {
-
     String id;
     Boolean isDeleted;
     String firstName;
@@ -30,6 +29,8 @@ public class AccountDto {
     String about;
     String city;
     String country;
+
+    String gender;
     StatusCodeType statusCode;
     LocalDateTime regDate;
     LocalDateTime birthDate;

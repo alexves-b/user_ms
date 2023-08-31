@@ -37,6 +37,7 @@ public class User {
     String about;
     String city;
     String country;
+    String gender;
     StatusCodeType statusCode;
     LocalDateTime regDate;
     LocalDateTime birthDate;

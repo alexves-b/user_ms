@@ -7,6 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.lang.instrument.UnmodifiableClassException;
+
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -30,5 +32,12 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ApplicationError(HttpStatus.CONFLICT
                 .value(), e.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ApplicationError> catchEmailInTokenNotEqualsUserDto(TokenDoesNotMatchEditUser e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ApplicationError(HttpStatus.CONFLICT
+                .value(), e.getMessage()), HttpStatus.CONFLICT);
     }
 }

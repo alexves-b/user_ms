@@ -10,6 +10,6 @@ public class UserSpecification {
     }
 
     public static Specification<User> findByLastName(String name) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("last_name"), String.format("%%%s%%", name));
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("lastName"), String.format("%%%s%%", name));
     }
 }
