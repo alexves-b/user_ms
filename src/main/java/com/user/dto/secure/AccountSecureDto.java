@@ -14,7 +14,6 @@ public class AccountSecureDto {
         this.roles = roles;
     }
     Long id;
-    Boolean isDeleted;
     String firstName;
     String lastName;
     String email;

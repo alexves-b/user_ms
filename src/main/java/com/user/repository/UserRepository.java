@@ -17,5 +17,7 @@ public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecifi
 
     Optional <User> findById(Long id);
 
-    Optional <User> deleteUserById(Long id);
+    Long deleteUserById(Long id);
+
+    Long deleteByEmail(String email);
 }

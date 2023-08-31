@@ -17,6 +17,9 @@ public interface UserService {
     AccountResponseDto createUser(AccountSecureDto accountSecureDto);
     @Transactional
     User editUser(AccountDto accountDto);
+    @Transactional
+    User editUser(AccountDto accountDto, String email);
+
     List<AccountDto> searchUser(String username, String offset, String limit);
 
     User getUserById(Long id);
@@ -25,6 +28,14 @@ public interface UserService {
 
     Long deleteUserById(Long id);
 
+
+    void markForDeleteUserAfterThirtyDaysByToken(String bearToken);
+
     void blockUser(Long id);
+
+    String getEmailFromBearerToken(String bearerToken);
+
+    Long getUserCount();
+
 
 }
