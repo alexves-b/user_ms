@@ -3,7 +3,7 @@ package com.user.service.impl;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.dto.account.AccountDto;
-import com.user.dto.response.AccountResponseDto;
+import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailIsBlank;
 import com.user.exception.EmailNotUnique;
@@ -18,13 +18,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,15 +37,14 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenUtils jwtTokenUtils;
 
     @Override
-    public AccountResponseDto getUserByEmail(String email) {
+    public AccountDto getUserByEmail(String email) {
         User user = userRepository.findUserByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("user with email: " + email + " not found"));
-        return new AccountResponseDto(new AccountSecureDto(user.getId(),
-                user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getPassword(), user.getRoles()), true);
+        log.info("user from repository: \n" + user);
+        return new AccountDto(user);
     }
     @Override
-    public AccountResponseDto createUser(AccountSecureDto accountSecureDto) {
+    public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
         if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
             throw new EmailIsBlank("email is blank");
         }
@@ -56,11 +56,12 @@ public class UserServiceImpl implements UserService {
                 .firstName(accountSecureDto.getFirstName())
                 .lastName(accountSecureDto.getLastName())
                 .password(accountSecureDto.getPassword())
+                .regDate(LocalDateTime.now())
                 .roles("ROLE_USER").build();
         userRepository.save(user);
-        log.info(user.toString());
-        return new AccountResponseDto(new AccountSecureDto(user.getId(), user.getFirstName(),
-                user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles()), true);
+        log.info("User was created:  " + user);
+        return new AccountSecureDto(user.getId(), user.getFirstName(),
+                user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles());
     }
 
     @Override
@@ -71,6 +72,7 @@ public class UserServiceImpl implements UserService {
                         ("user with email: " + accountDto.getEmail() + " not found"));
         if (oldUser.getEmail().equals(accountDto.getEmail())) {
             oldUser = (User) objectMapper(accountDto);
+            log.info("user was edited: " + oldUser);
             userRepository.save(oldUser);
         }
         return oldUser;
@@ -79,18 +81,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public User editUser(AccountDto accountDto, String email) {
         if (accountDto.getEmail().equals(email)) {
+            log.info("user was edited: " + accountDto);
            return editUser(accountDto);
         } else throw new TokenDoesNotMatchEditUser("Email from token not equals email in Dto");
     }
 
 
     @Override
-    public List<AccountDto> searchUser(String username, String offset, String limit) {
-        if (username.isBlank()) {
+    public List<AccountDto> searchUser(String userFullName, String offset, String limit) {
+        if (userFullName.isBlank()) {
             throw new UsernameNotFoundException("пусто");
         }
-        log.info("Fullname user: - " + username);
-        String[] fullName = username.split(" ");
+        log.info("Fullname user: - " + userFullName);
+        String[] fullName = userFullName.split(" ");
         String firstName;
         String lastName;
 
@@ -116,8 +119,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() ->
+        User user = userRepository.findById(id).orElseThrow(() ->
                 new UsernameNotFoundException("user with id: " + id + " not found"));
+        log.info("user with " + id + "was found" );
+        return user;
     }
     @Override
     public List <User> getAllUsers() {
@@ -136,9 +141,28 @@ public class UserServiceImpl implements UserService {
         String email = getEmailFromBearerToken(bearToken);
         User user = (userRepository.findUserByEmail(email)
                 .orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
-            timerForDeleteAfter30Days(user.getEmail());
+        user.setIsDeleted(true);
+        user.setDeletionDate(LocalDateTime.now().plusDays(30));
+        userRepository.save(user);
     }
-
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void deleteAccountMarkedDeleteAndDelDateToday(){
+        List <User> listForDeletion = userRepository.
+                findUserByIsDeletedAndDateLessThanEqual(LocalDate.now());
+        log.info("time when was deleted: - " + LocalDateTime.now());
+        log.info(listForDeletion.toString());
+        userRepository.deleteAll(listForDeletion);
+        log.info("users was deleted!");
+    }
+    @Transactional
+    @Override
+    public void unmarkForDeleteUserAfterThirtyDaysByToken(String bearToken) {
+        String email = getEmailFromBearerToken(bearToken);
+        User user = (userRepository.findUserByEmail(email)
+                .orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
+        user.setIsDeleted(false);
+        user.setDeletionDate(null);
+    }
     @Override
     public void blockUser(Long id) {
 //        Optional<User> user = userRepository.findById(id);
@@ -170,23 +194,16 @@ public class UserServiceImpl implements UserService {
        return userRepository.count();
     }
 
+    @Override
+    public AccountStatisticRequestDto getStatistic(AccountStatisticRequestDto accountStatisticRequestDto) {
+        return new AccountStatisticRequestDto();
+
+    }
+
     public static Object objectMapper(Object object) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         return mapper.convertValue(object, User.class);
-    }
-
-    public void timerForDeleteAfter30Days(String email) {
-        TimerTask deletionTask = new TimerTask() {
-            public void run() {
-                userRepository.deleteByEmail(email);
-                log.warn("user with email: " + email + " was deleted");
-            }
-        };
-        Timer timer = new Timer();
-        LocalDateTime now = LocalDateTime.now().plusDays(30);
-        long delay = now.get(ChronoField.MILLI_OF_DAY);
-        timer.schedule(deletionTask, delay);
     }
 
 }

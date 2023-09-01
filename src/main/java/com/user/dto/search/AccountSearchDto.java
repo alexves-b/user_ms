@@ -7,13 +7,9 @@ import lombok.Data;
 public class AccountSearchDto {
 
     String id;
-
     boolean isDeleted;
-
     String ids;
-
-    String blockedByids;
-
+    String blockedByIds;
     String author;
 
     String firstName;
