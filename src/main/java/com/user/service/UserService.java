@@ -29,4 +29,5 @@ public interface UserService {
     String getEmailFromBearerToken(String bearerToken);
     Long getUserCount();
     AccountStatisticRequestDto getStatistic(AccountStatisticRequestDto accountStatisticRequestDto);
+    void deleteAccountMarkedDeleteAndDelDateToday();
 }
