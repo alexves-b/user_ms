@@ -148,7 +148,7 @@ public class UserServiceImpl implements UserService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void deleteAccountMarkedDeleteAndDelDateToday(){
         List <User> listForDeletion = userRepository.
-                findUserByIsDeletedAndDateLessThanEqual(LocalDate.now());
+                findUserByIsDeletedAndDateBefore(LocalDate.now());
         log.info("time when was deleted: - " + LocalDateTime.now());
         log.info(listForDeletion.toString());
         userRepository.deleteAll(listForDeletion);
