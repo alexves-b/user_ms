@@ -16,5 +16,7 @@ public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecifi
     Optional <User> findUserByEmail(String email);
     Optional <User> findById(Long id);
     Long deleteUserById(Long id);
-    List<User> findUserByIsDeletedAndDateBefore(LocalDate localDate);
+    List<User> findUserByIsDeletedAndDeletionDateBeforeNow(LocalDate now);
+
+
 }
