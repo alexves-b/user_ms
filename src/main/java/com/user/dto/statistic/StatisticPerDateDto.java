@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class StatisticPerDateDto {
-
     LocalDateTime date;
-
     int count;
-
 }
