@@ -63,8 +63,8 @@ public class AccountDto {
     LocalDateTime birthDate;
     String messagePermission;
     LocalDateTime lastOnlineTime;
-    boolean isOnline;
-    boolean isBlocked;
+    Boolean isOnline;
+    Boolean isBlocked;
     String emojiStatus;
     LocalDateTime createdOn;
     LocalDateTime updatedOn;
