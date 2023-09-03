@@ -15,7 +15,7 @@ spring.datasource:
 
 spring:
   application:
-    name: users_ms
+    name: users
   datasource:
     spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
