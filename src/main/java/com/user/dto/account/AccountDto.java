@@ -21,7 +21,7 @@ public class AccountDto {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.password = user.getPassword();
-        this.role = user.getRoles();
+        this.roles = user.getRoles();
         this.authority = user.getAuthority();
         this.phone = user.getPhone();
         this.photo = user.getPhoto();
@@ -49,7 +49,7 @@ public class AccountDto {
     String lastName;
     String email;
     String password;
-    String role;
+    String roles;
     String authority;
     String phone;
     String photo;
