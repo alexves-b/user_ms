@@ -88,14 +88,12 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<AccountDto> searchUser(String userFullName, String offset, String limit) {
-        if (userFullName.isBlank()) {
+    public List<AccountDto> searchUser(String username, String offset, String limit) {
+        if (username.isBlank()) {
             throw new UsernameNotFoundException("пусто");
         }
-        log.info("Fullname user: - " + userFullName);
-        String[] fullName = userFullName.split(" ");
-        String firstName;
-        String lastName;
+        String[] fullName = username.split(" ");
+        String firstName, lastName;
 
         if (fullName.length < 2) {
             firstName = fullName[0];
@@ -104,9 +102,16 @@ public class UserServiceImpl implements UserService {
             firstName = fullName[0];
             lastName = fullName[1];
         }
+        String finalFirstName = firstName.toLowerCase().replace(String.valueOf(firstName.charAt(0)),
+                String.valueOf(firstName.charAt(0)).toUpperCase());
+        String finalLastName = firstName.toLowerCase().replace(String.valueOf(lastName.charAt(0)),
+                String.valueOf(lastName.charAt(0)).toUpperCase());
+
         Specification<User> specification = Specification
-                .where(UserSpecification.findByFirstName(firstName))
-                .or(UserSpecification.findByLastName(lastName));
+                .where(UserSpecification.findByFirstName(finalFirstName))
+                .or(UserSpecification.findByLastName(finalLastName))
+                .or(UserSpecification.findByFirstName(finalLastName))
+                .or(UserSpecification.findByLastName(finalFirstName));
 
         Page<User> userList = userRepository.findAll(specification,
                 PageRequest.of(Integer.parseInt(offset), Integer.parseInt(limit)));
@@ -148,12 +153,12 @@ public class UserServiceImpl implements UserService {
     @Scheduled(cron = "0 0 0 * * ?")
     public void deleteAccountMarkedDeleteAndDelDateToday() {
         try {
-            // List<User> listForDeletion = userRepository
-            //        .findUserByIsDeletedAndDeletionDateBeforeNow(LocalDate.now())
-            //        .orElseThrow(() -> new RuntimeException("No user for deletion"));
+             List<User> listForDeletion = userRepository
+                    .findUserByIsDeletedAndDeletionDateBeforeNow()
+                    .orElseThrow(() -> new RuntimeException("Not found users for deletion!"));
             log.info("time when was deleted: - " + LocalDateTime.now());
-           // log.info(listForDeletion.toString());
-            //userRepository.deleteAll(listForDeletion);
+            log.info(listForDeletion.toString());
+            userRepository.deleteAll(listForDeletion);
             log.info("users was deleted!");
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -171,11 +176,11 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public void blockUser(Long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        user.ifPresent(() -> {
-//            user.get().setBlocked(!user.get().isBlocked());
-//            userRepository.save(user.get());
-//        });
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("user with id: " + id + " not found, can't block or unblock user."));
+        user.setIsBlocked(!user.getIsBlocked());
+        log.info("user: " + user.getId() + "isBlocked: " + user.getIsBlocked() );
+        userRepository.save(user);
     }
 
     @Override
