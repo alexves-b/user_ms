@@ -32,7 +32,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://5.63.154.191:8087/eureka
-
   instance:
     hostname: 5.63.154.191
 
@@ -85,3 +84,9 @@ kafka:
     notify: notify-topic
     friends: friends-topic
     admin: admin-topic
+
+logging:
+  level:
+    org.apache.kafka.clients.producer.ProducerConfig: WARN
+    org.apache.kafka.clients.consumer.ConsumerConfig: WARN
+    org.apache.kafka.clients.clients.Metadata: WARN

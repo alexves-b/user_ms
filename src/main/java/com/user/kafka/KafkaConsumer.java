@@ -16,16 +16,6 @@ public class KafkaConsumer {
 
 	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
 	public void listenGroupAuth(String message) {
-		log.info("◀ message '{}' received from group '{}'", message, groupId);
+		log.info("--|< message '{}' received from group '{}'", message, groupId);
 	}
-//
-//	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "filteredKafkaListenerContainerFactory")
-//	public void listenFilteredMessage(String message) {
-//		log.info("◀ message '{}' received from group '{}' filtered by KEYWORD '{}'", message, groupId, KEYWORD_FOR_CONSUMER);
-//	}
-
-//	@KafkaListener(topics = "auth2users", groupId = "${spring.application.name}", containerFactory = "jsonKafkaListenerContainerFactory")
-//	public void jsonListener(@NotNull JsonMessage jsonMessage) {
-//		log.info("◀ JSON message '{}' received from group '{}'", jsonMessage.toString(), groupId);
-//	}
 }
