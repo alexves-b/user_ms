@@ -80,7 +80,11 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + accountDto.getEmail() + " not found"));
 		if (oldUser.getEmail().equals(accountDto.getEmail())) {
-			oldUser = (User) objectMapper(accountDto);
+			oldUser.setAbout(accountDto.getAbout());
+			oldUser.setFirstName(accountDto.getFirstName());
+			oldUser.setLastName(accountDto.getLastName());
+			oldUser.setPhone(accountDto.getPhone());
+			oldUser.setBirthDate(accountDto.getBirthDate());
 			log.info("user was edited: " + oldUser);
 			userRepository.save(oldUser);
 		}
@@ -89,10 +93,8 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User editUser(AccountDto accountDto, String email) {
-		if (accountDto.getEmail().equals(email)) {
-			log.info("user was edited: " + accountDto);
+		    accountDto.setEmail(email);
 			return editUser(accountDto);
-		} else throw new TokenDoesNotMatchEditUser("Email from token not equals email in Dto");
 	}
 
 

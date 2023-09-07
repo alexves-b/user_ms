@@ -78,11 +78,12 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
-            consumes = {"application/json"},
+            consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     AccountDto editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
                             @RequestBody AccountDto accountDto ) {
         String email = userService.getEmailFromBearerToken(bearerToken);
+        log.info(accountDto.toString());
         return new AccountDto(userService.editUser(accountDto,email));
     }
 
