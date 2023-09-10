@@ -6,6 +6,7 @@ import com.user.dto.secure.AccountSecureDto;
 import com.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.List;
 
 public interface UserService {
@@ -30,4 +31,6 @@ public interface UserService {
     Long getUserCount();
     AccountStatisticRequestDto getStatistic(AccountStatisticRequestDto accountStatisticRequestDto);
     void deleteAccountMarkedDeleteAndDelDateToday();
+
+    String uploadAvatarToServer(byte[] file);
 }
