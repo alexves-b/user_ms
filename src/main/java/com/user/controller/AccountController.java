@@ -21,9 +21,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@CrossOrigin
 @RequiredArgsConstructor
-
 public class AccountController {
 
     private final EurekaClient eurekaClient;
