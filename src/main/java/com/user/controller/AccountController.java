@@ -81,14 +81,25 @@ public class AccountController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     AccountDto editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
-                                  @RequestParam("file") MultipartFile file,
-                            @RequestBody AccountDto accountDto ) throws Exception {
-        userService.uploadAvatarToServer(file.getBytes());
-        log.info(file.getName());
-        log.info(String.valueOf(file.getSize()));
+                            @RequestBody AccountDto accountDto ){
         String email = userService.getEmailFromBearerToken(bearerToken);
         log.info(accountDto.toString());
         return new AccountDto(userService.editUser(accountDto,email));
+    }
+    @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта",
+            tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/me/addAvatar",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.PUT)
+    AccountDto editAccountIfLogin(@RequestParam("file") MultipartFile file ) throws Exception {
+        userService.uploadAvatarToServer(file.getBytes());
+        log.info(file.getName());
+        log.info(String.valueOf(file.getSize()));
+        return new AccountDto(new User());
     }
 
    @Operation(summary = "mark account for delete",

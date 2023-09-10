@@ -45,24 +45,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.github.openfeign</groupId>
-			<artifactId>feign-okhttp</artifactId>
-			<version>10.11</version>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+			<version>4.0.3</version>
 		</dependency>
-		<dependency>
-			<groupId>io.github.openfeign</groupId>
-			<artifactId>feign-gson</artifactId>
-			<version>10.11</version>
-		</dependency>
-		<dependency>
-			<groupId>io.github.openfeign</groupId>
-			<artifactId>feign-slf4j</artifactId>
-			<version>10.11</version>
-		</dependency>
+
 		<dependency>
 			<groupId>com.storage</groupId>
 			<artifactId>storage-demo</artifactId>
-			<version>0.0.1-20230804.133007-1</version>
+			<version>0.0.2-20230824.174336-1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.vmware.test-operations</groupId>
@@ -216,6 +207,7 @@
 			<url>http://5.63.154.191:8081/repository/storage/</url>
 		</repository>
 	</repositories>
+
 
 	<distributionManagement>
 		<repository>
