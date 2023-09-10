@@ -20,6 +20,11 @@ public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecifi
 
     @Query(value = "SELECT * FROM public.users WHERE is_deleted = true AND deletion_date <= NOW()"
             ,nativeQuery = true)
+    Optional <List<User>> findUserByIsDeletedAndDeletionDateBeforeNow();
+
+
+    @Query(value = "SELECT * FROM public.users WHERE is_deleted = true AND deletion_date <= NOW()"
+            ,nativeQuery = true)
    Optional <List<User>> findUserByIsDeletedAndDeletionDateBeforeNow();
 
 }

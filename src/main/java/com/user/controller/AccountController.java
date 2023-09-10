@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,10 +76,14 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
-            consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     AccountDto editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
-                            @RequestBody AccountDto accountDto ) {
+                                  @RequestParam("file") MultipartFile file,
+                            @RequestBody AccountDto accountDto ) throws Exception {
+        userService.uploadAvatarToServer(file.getBytes());
+        log.info(file.getName());
+        log.info(String.valueOf(file.getSize()));
         String email = userService.getEmailFromBearerToken(bearerToken);
         log.info(accountDto.toString());
         return new AccountDto(userService.editUser(accountDto,email));

@@ -1,5 +1,6 @@
 package com.user.service.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -86,7 +88,6 @@ public class UserServiceImpl implements UserService {
 			oldUser.setPhone(accountDto.getPhone());
 			oldUser.setBirthDate(accountDto.getBirthDate());
 			log.info("user was edited: " + oldUser);
-			userRepository.save(oldUser);
 		}
 		return oldUser;
 	}
@@ -175,17 +176,22 @@ public class UserServiceImpl implements UserService {
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteAccountMarkedDeleteAndDelDateToday() {
 		try {
-			// List<User> listForDeletion = userRepository
-			//        .findUserByIsDeletedAndDeletionDateBeforeNow(LocalDate.now())
-			//        .orElseThrow(() -> new RuntimeException("No user for deletion"));
+			 List<User> listForDeletion = userRepository.findUserByIsDeletedAndDeletionDateBeforeNow()
+			.orElseThrow(() -> new RuntimeException("No user for deletion"));
 			log.info("time when was deleted: - " + LocalDateTime.now());
-			// log.info(listForDeletion.toString());
-			//userRepository.deleteAll(listForDeletion);
+			log.info(listForDeletion.toString());
+			userRepository.deleteAll(listForDeletion);
 			log.info("users was deleted!");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			log.warn(ex.getMessage());
 		}
+	}
+
+	@Override
+	public String uploadAvatarToServer(byte[] file) {
+		//
+		return null;
 	}
 
 	@Transactional
@@ -235,6 +241,7 @@ public class UserServiceImpl implements UserService {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static Object objectMapper(Object object) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
