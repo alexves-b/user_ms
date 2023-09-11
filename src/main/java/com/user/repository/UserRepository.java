@@ -6,8 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 
 
@@ -20,7 +19,7 @@ public interface UserRepository extends JpaRepository<User,Integer> , JpaSpecifi
 
     @Query(value = "SELECT * FROM public.users WHERE is_deleted = true AND deletion_date <= NOW()"
             ,nativeQuery = true)
-    Optional <List<User>> findUserByIsDeletedAndDeletionDateBeforeNow();
+    Optional <ArrayList<User>> findUserByIsDeletedAndDeletionDateBeforeNow();
 
 
     @Query(value = "SELECT * FROM public.users WHERE is_deleted = true AND deletion_date <= NOW()"
