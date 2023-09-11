@@ -13,6 +13,10 @@ spring.datasource:
   username: selectel
   password: selectel
 
+gtw:
+  ADMIN-PANEL: http://${eureka.instance.hostname}:8088/admin-panel
+
+
 spring:
   application:
     name: users

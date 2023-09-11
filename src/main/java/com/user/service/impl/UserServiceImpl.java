@@ -3,6 +3,7 @@ package com.user.service.impl;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.user.client.AdminClient;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.kafka.CommonNotifyDto;
@@ -25,6 +26,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
 import java.time.LocalDateTime;
@@ -38,6 +40,7 @@ public class UserServiceImpl implements UserService {
 	private final UserRepository userRepository;
 	private final JwtTokenUtils jwtTokenUtils;
 	private final KafkaProducer kafkaProducer;
+	private final AdminClient adminClient;
 
 
 	@Override
@@ -183,9 +186,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public String uploadAvatarToServer(byte[] file) {
-		//
-		return null;
+	public String uploadAvatarToServer(String bearerToken, MultipartFile file) {
+		return adminClient.getLinkForUploadAvatar(bearerToken,file).getFileName();
 	}
 
 	@Transactional
@@ -200,11 +202,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void blockUser(Long id) {
-//        Optional<User> user = userRepository.findById(id);
-//        user.ifPresent(() -> {
-//            user.get().setBlocked(!user.get().isBlocked());
-//            userRepository.save(user.get());
-//        });
+		User user = userRepository.findById(id).orElseThrow(() ->
+				new UsernameNotFoundException("user with id: " + id + " not found, can't block or unblock user."));
+		user.setIsBlocked(!user.getIsBlocked());
+		log.info("user: " + user.getId() + "isBlocked: " + user.getIsBlocked() );
+		userRepository.save(user);
 	}
 
 	@Override

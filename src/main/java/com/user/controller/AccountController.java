@@ -77,7 +77,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.PUT)
     AccountDto editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
                             @RequestBody AccountDto accountDto ){
@@ -93,12 +93,12 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me/addAvatar",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.PUT)
-    AccountDto editAccountIfLogin(@RequestParam("file") MultipartFile file ) throws Exception {
-        userService.uploadAvatarToServer(file.getBytes());
+            method = RequestMethod.POST)
+    String editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
+                                  @RequestParam("file") MultipartFile file ) throws Exception {
         log.info(file.getName());
         log.info(String.valueOf(file.getSize()));
-        return new AccountDto(new User());
+        return userService.uploadAvatarToServer(bearerToken,file);
     }
 
    @Operation(summary = "mark account for delete",
