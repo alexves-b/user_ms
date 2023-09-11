@@ -1,18 +1,15 @@
 package com.user.service.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.kafka.CommonNotifyDto;
 import com.user.dto.kafka.CommonNotifyTypeEnum;
-import com.user.dto.kafka.ServiceNameEnum;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailIsBlank;
 import com.user.exception.EmailNotUnique;
-import com.user.exception.TokenDoesNotMatchEditUser;
 import com.user.jwt_token.JwtTokenUtils;
 import com.user.kafka.KafkaProducer;
 import com.user.model.User;
@@ -30,9 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.io.File;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -176,7 +170,7 @@ public class UserServiceImpl implements UserService {
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteAccountMarkedDeleteAndDelDateToday() {
 		try {
-			 List<User> listForDeletion = userRepository.findUserByIsDeletedAndDeletionDateBeforeNow()
+			 List <User> listForDeletion = userRepository.findUserByIsDeletedAndDeletionDateBeforeNow()
 			.orElseThrow(() -> new RuntimeException("No user for deletion"));
 			log.info("time when was deleted: - " + LocalDateTime.now());
 			log.info(listForDeletion.toString());
