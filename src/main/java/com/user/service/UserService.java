@@ -5,6 +5,7 @@ import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.List;
@@ -25,6 +26,9 @@ public interface UserService {
     @Transactional
     Long deleteUserById(Long id);
     void markForDeleteUserAfterThirtyDaysByToken(String bearToken);
+
+    String uploadAvatarToServer(String bearerToken, MultipartFile file);
+
     void unmarkForDeleteUserAfterThirtyDaysByToken(String bearToken);
     void blockUser(Long id);
     String getEmailFromBearerToken(String bearerToken);
@@ -32,5 +36,4 @@ public interface UserService {
     AccountStatisticRequestDto getStatistic(AccountStatisticRequestDto accountStatisticRequestDto);
     void deleteAccountMarkedDeleteAndDelDateToday();
 
-    String uploadAvatarToServer(byte[] file);
 }
