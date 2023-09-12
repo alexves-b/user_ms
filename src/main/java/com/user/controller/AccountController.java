@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,10 +25,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class AccountController {
-
     private final EurekaClient eurekaClient;
     private final UserServiceImpl userService;
-
     @Operation(summary = "get AccountByEmail", description = "Получение данных аккаунта по email", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -46,7 +45,6 @@ public class AccountController {
     AccountDto editAccount(@RequestBody AccountDto accountDto) {
         return new AccountDto(userService.editUser(accountDto));
     }
-
     @Operation(summary = "create Account", description = "Создание аккаунта при регистрации", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -57,7 +55,6 @@ public class AccountController {
    public AccountSecureDto createAccount(@RequestBody AccountSecureDto accountSecureDto) {
         return userService.createUser(accountSecureDto);
     }
-
     @Operation(summary = "get account when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
@@ -65,11 +62,25 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    AccountDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken ) {
+    AccountDto getAccountWhenLogin(Principal principal,@RequestHeader("Authorization") @NonNull String bearerToken) {
+        log.info(principal.getName());
+        log.info(userService.getUserByEmail(principal.getName()).toString());
        String email = userService.getEmailFromBearerToken(bearerToken);
         return userService.getUserByEmail(email);
     }
-
+    @Operation(summary = "edit photo from profile settings", description = "Обновление аватара",
+            tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/me/addAvatar",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.POST)
+    String editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
+                              @RequestParam("file") MultipartFile file ){
+        return userService.uploadAvatarToServer(bearerToken,file);
+    }
     @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта",
             tags = {"Account service"})
     @ApiResponses(value = {
@@ -85,22 +96,32 @@ public class AccountController {
         log.info(accountDto.toString());
         return new AccountDto(userService.editUser(accountDto,email));
     }
-    @Operation(summary = "edit account if login", description = "Обновление авторизованного аккаунта",
+    @Operation(summary = "edit Email", description = "Обновление авторизованного аккаунта",
             tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
-    @RequestMapping(value = "/api/v1/account/me/addAvatar",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.POST)
-    String editAccountIfLogin(@RequestHeader("Authorization") @NonNull String bearerToken,
-                                  @RequestParam("file") MultipartFile file ) throws Exception {
-        log.info(file.getName());
-        log.info(String.valueOf(file.getSize()));
-        return userService.uploadAvatarToServer(bearerToken,file);
+    @RequestMapping(value = "/api/v1/account/me/change-email",
+            consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.PUT)
+    AccountDto editEmail(@RequestHeader("Authorization") @NonNull String bearerToken,
+                                  @RequestBody AccountDto accountDto ){
+        return userService.changeEmail(accountDto.getEmail(),bearerToken);
     }
-
+    @Operation(summary = "edit Password", description = "Обновление авторизованного аккаунта",
+            tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @RequestMapping(value = "/api/v1/account/me/change-password",
+            consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
+            method = RequestMethod.PUT)
+    AccountDto editPassword(@RequestHeader("Authorization") @NonNull String bearerToken,
+                                  @RequestBody AccountDto accountDto ){
+        return userService.changePassword(accountDto.getPassword(),bearerToken);
+    }
    @Operation(summary = "mark account for delete",
             description = "Помечает авторизованный аккаунт как удалённый" +
                     " и через заданное время стирает данные об аккаунте",
@@ -114,7 +135,6 @@ public class AccountController {
     void markAccountForDelete(@RequestHeader("Authorization") @NonNull String bearerToken) {
         userService.markForDeleteUserAfterThirtyDaysByToken(bearerToken);
     }
-
     @Operation(summary = "unmark account for delete",
             description = "Снимает пометку авторизованного аккаунта как удалённый",
             tags = {"Account service"})
@@ -127,10 +147,6 @@ public class AccountController {
     void unmarkAccountForDelete(@RequestHeader("Authorization") @NonNull String bearerToken) {
         userService.unmarkForDeleteUserAfterThirtyDaysByToken(bearerToken);
     }
-
-
-
-
     @Operation(summary = "Get account by id", description = "Получение данных по id", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -141,8 +157,6 @@ public class AccountController {
     AccountDto getAccountById(@PathVariable Long id) {
         return new AccountDto(userService.getUserById(id));
     }
-
-
     @Operation(summary = "Delete account by id", description = "Полность удаляет аккаунт из базы по id", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -153,8 +167,6 @@ public class AccountController {
     Long deleteAccountById(@PathVariable Long id) {
         return userService.deleteUserById(id);
     }
-
-
     @Operation(summary = "Get all accounts, not work",
             description = "Позволяет получить все аккаунты, не реализован", tags = {"Account service"})
     @ApiResponses(value = {
