@@ -22,7 +22,6 @@ public interface UserService {
     List<AccountDto> searchUser(String username, String offset, String limit);
     User getUserById(Long id);
     List <User> getAllUsers();
-
     @Transactional
     Long deleteUserById(Long id);
     void markForDeleteUserAfterThirtyDaysByToken(String bearToken);

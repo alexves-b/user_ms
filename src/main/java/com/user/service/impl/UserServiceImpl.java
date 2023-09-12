@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService {
 	private final JwtTokenUtils jwtTokenUtils;
 	private final KafkaProducer kafkaProducer;
 	private final AdminClient adminClient;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 
 	@Override
@@ -78,14 +80,7 @@ public class UserServiceImpl implements UserService {
 		User oldUser = userRepository.findUserByEmail(accountDto.getEmail())
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + accountDto.getEmail() + " not found"));
-		if (oldUser.getEmail().equals(accountDto.getEmail())) {
-			oldUser.setAbout(accountDto.getAbout());
-			oldUser.setFirstName(accountDto.getFirstName());
-			oldUser.setLastName(accountDto.getLastName());
-			oldUser.setPhone(accountDto.getPhone());
-			oldUser.setBirthDate(accountDto.getBirthDate());
-			log.info("user was edited: " + oldUser);
-		}
+		changeUserDetails(oldUser, accountDto);
 		return oldUser;
 	}
 
@@ -133,7 +128,6 @@ public class UserServiceImpl implements UserService {
 		log.info("user with " + id + "was found");
 		return user;
 	}
-
 	@Override
 	public List<User> getAllUsers() {
 		return userRepository.findAll();
@@ -199,7 +193,6 @@ public class UserServiceImpl implements UserService {
 		user.setIsDeleted(false);
 		user.setDeletionDate(null);
 	}
-
 	@Override
 	public void blockUser(Long id) {
 		User user = userRepository.findById(id).orElseThrow(() ->
@@ -208,7 +201,6 @@ public class UserServiceImpl implements UserService {
 		log.info("user: " + user.getId() + "isBlocked: " + user.getIsBlocked() );
 		userRepository.save(user);
 	}
-
 	@Override
 	public String getEmailFromBearerToken(String bearerToken) {
 		log.info(bearerToken);
@@ -225,7 +217,6 @@ public class UserServiceImpl implements UserService {
 		}
 		return email;
 	}
-
 	@Override
 	public Long getUserCount() {
 		return userRepository.count();
@@ -242,5 +233,43 @@ public class UserServiceImpl implements UserService {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		return mapper.convertValue(object, User.class);
+	}
+	@Transactional
+	public AccountDto changeEmail(String email,String bearerToken) {
+		String emailFromBearerToken = getEmailFromBearerToken(bearerToken);
+		User user = userRepository.findUserByEmail(emailFromBearerToken)
+				.orElseThrow(() -> new UsernameNotFoundException
+						("user with email: " + emailFromBearerToken + " not found"));
+		user.setEmail(email);
+		return new AccountDto(user);
+	}
+
+	@Transactional
+	public AccountDto changePassword(String password,String bearerToken) {
+		String passwordBCrypt = passwordEncoder.encode(password);
+		String email = getEmailFromBearerToken(bearerToken);
+		User user = userRepository.findUserByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException
+						("user with email: " + email + " not found"));
+		user.setPassword(passwordBCrypt);
+		log.info("Password for user " +user.getEmail() + " was changed");
+		return new AccountDto(user);
+	}
+	public void changeUserDetails(User user, AccountDto accountDto){
+           //Проверить наличие всех полей
+		if (user.getEmail().equals(accountDto.getEmail())) {
+			user.setEmojiStatus(accountDto.getEmojiStatus());
+			user.setPhoto(accountDto.getPhoto());
+			user.setAbout(accountDto.getAbout());
+			user.setCity(accountDto.getCity());
+			user.setCountry(accountDto.getCountry());
+			user.setFirstName(accountDto.getFirstName());
+			user.setLastName(accountDto.getLastName());
+			user.setPhone(accountDto.getPhone());
+			user.setBirthDate(accountDto.getBirthDate());
+			user.setGender(accountDto.getGender());
+			user.setProfileCover(accountDto.getProfileCover());
+			log.info("user was edited: " + user);
+		}
 	}
 }
