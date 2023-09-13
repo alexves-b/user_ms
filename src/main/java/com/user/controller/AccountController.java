@@ -62,7 +62,13 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    AccountDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
+    AccountDto getAccountWhenLogin(Principal principal,@RequestHeader("Authorization") @NonNull String bearerToken) {
+        try {
+            log.info(principal.toString());
+            log.info(principal.getName());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
        String email = userService.getEmailFromBearerToken(bearerToken);
         return userService.getUserByEmail(email);
     }
