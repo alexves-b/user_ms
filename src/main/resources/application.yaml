@@ -17,6 +17,7 @@ gtw:
   ADMIN-PANEL: http://${eureka.instance.hostname}:8088/admin-panel
 
 
+
 spring:
   application:
     name: users
@@ -24,6 +25,7 @@ spring:
     spring.jpa.database-platform: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
+
 
 liquibase:
   enabled: true

@@ -19,6 +19,7 @@ import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,7 +44,6 @@ public class UserServiceImpl implements UserService {
 	private final KafkaProducer kafkaProducer;
 	private final AdminClient adminClient;
 	private final BCryptPasswordEncoder passwordEncoder;
-
 
 	@Override
 	public AccountDto getUserByEmail(String email) {
