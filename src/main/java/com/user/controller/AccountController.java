@@ -1,6 +1,7 @@
 package com.user.controller;
 
 import com.netflix.discovery.EurekaClient;
+import com.user.dto.RequestDtoChangeEmail;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountStatisticResponseDto;
 import com.user.dto.secure.AccountSecureDto;
@@ -17,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,8 +105,9 @@ public class AccountController {
             consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
             method = RequestMethod.POST)
     AccountDto editEmail(@RequestHeader("Authorization") @NonNull String bearerToken,
-                                  @RequestBody AccountDto accountDto ){
-        return userService.changeEmail(accountDto.getEmail(),bearerToken);
+                                  @RequestBody RequestDtoChangeEmail requestDtoChangeEmail ){
+        log.info(requestDtoChangeEmail.getEmail().getEmail());
+        return userService.changeEmail(requestDtoChangeEmail.getEmail().getEmail(),bearerToken);
     }
     @Operation(summary = "edit Password", description = "Обновление авторизованного аккаунта",
             tags = {"Account service"})
@@ -194,7 +195,6 @@ public class AccountController {
         return new AccountStatisticResponseDto();
     }
 
-
     @Operation(summary = "Get Account By statusCode",
             description = "Позволяет получать аккаунты относительно запрашиваемого статуса", tags = {"Account service"})
     @ApiResponses(value = {
@@ -246,5 +246,16 @@ public class AccountController {
     long getAllUsersCount() {
         return userService.getUserCount();
     }
-}
 
+    @Operation(summary = "get country list when login",
+            description = "Получение своих данных при входе на сайт", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @GetMapping(value = "/api/v1/geo/country", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    List<List<String>> getCountryWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
+        return userService.getCountryList();
+    }
+
+}

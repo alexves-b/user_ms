@@ -19,6 +19,7 @@ import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -244,6 +245,7 @@ public class UserServiceImpl implements UserService {
 			log.warn("email: " + email + " not unique!");
 			throw new EmailNotUnique("email: " + email + " not unique!");
 		}
+		log.info(email);
 		user.setEmail(email);
 		return new AccountDto(user);
 	}
@@ -275,5 +277,30 @@ public class UserServiceImpl implements UserService {
 			user.setProfileCover(accountDto.getProfileCover());
 			log.info("user was edited: " + user);
 		}
+	}
+
+	public List<List <String>> getCountryList(){
+		List<String> russia = new ArrayList<>();
+		russia.add("Москва");
+		russia.add("Санкт-Петербург");
+		russia.add("Воронеж");
+
+		List<String> belarussia = new ArrayList<>();
+		russia.add("Минск");
+		russia.add("Витебск");
+		russia.add("Брест");
+
+		List<String> georgia = new ArrayList<>();
+		russia.add("Тбилиси");
+		russia.add("Батуми");
+		russia.add("Кутаиси");
+
+
+		List<List<String>> country = new ArrayList<>();
+
+		country.add(russia);
+		country.add(georgia);
+		country.add(belarussia);
+		return country;
 	}
 }
