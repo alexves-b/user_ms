@@ -72,6 +72,15 @@ kafka:
     key-serializer: org.apache.kafka.common.serialization.StringSerializer
     # Очередь для исключений
     value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    spring:
+      kafka:
+        producer:
+          properties:
+            spring:
+              json:
+                add:
+                  type:
+                    headers: false
     retries: 2
 
   #    jaas:
