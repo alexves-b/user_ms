@@ -103,7 +103,7 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me/change-email",
             consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.PUT)
+            method = RequestMethod.POST)
     AccountDto editEmail(@RequestHeader("Authorization") @NonNull String bearerToken,
                                   @RequestBody AccountDto accountDto ){
         return userService.changeEmail(accountDto.getEmail(),bearerToken);
