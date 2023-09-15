@@ -240,6 +240,10 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findUserByEmail(emailFromBearerToken)
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + emailFromBearerToken + " not found"));
+		if (userRepository.existsByEmail(email)){
+			log.warn("email: " + email + " not unique!");
+			throw new EmailNotUnique("email: " + email + " not unique!");
+		}
 		user.setEmail(email);
 		return new AccountDto(user);
 	}
