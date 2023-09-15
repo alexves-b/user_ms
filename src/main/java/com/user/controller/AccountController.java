@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -254,7 +255,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/geo/country", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    List<List<String>> getCountryWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
+    Map getCountryWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
         return userService.getCountryList();
     }
 

@@ -19,8 +19,8 @@ import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -279,28 +279,28 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	public List<List <String>> getCountryList(){
-		List<String> russia = new ArrayList<>();
-		russia.add("Москва");
-		russia.add("Санкт-Петербург");
-		russia.add("Воронеж");
+	public Map<String, Object> getCountryList(){
+		JSONObject jsonObject = new JSONObject();
 
-		List<String> belarussia = new ArrayList<>();
-		russia.add("Минск");
-		russia.add("Витебск");
-		russia.add("Брест");
+		JSONArray russia = new JSONArray();
+		russia.put("Москва");
+		russia.put("Санкт-Петербург");
+		russia.put("Воронеж");
 
-		List<String> georgia = new ArrayList<>();
-		russia.add("Тбилиси");
-		russia.add("Батуми");
-		russia.add("Кутаиси");
+		JSONArray belarussia = new JSONArray();
+		belarussia.put("Минск");
+		belarussia.put("Витебск");
+		belarussia.put("Брест");
 
+		JSONArray georgia = new JSONArray();
+		georgia.put("Тбилиси");
+		georgia.put("Батуми");
+		georgia.put("Кутаиси");
 
-		List<List<String>> country = new ArrayList<>();
-
-		country.add(russia);
-		country.add(georgia);
-		country.add(belarussia);
-		return country;
+		jsonObject.put("Россия",russia.toList());
+		jsonObject.put("Беларусь",belarussia.toList());
+		jsonObject.put("Грузия",georgia.toList());
+		System.out.println(jsonObject.toMap());
+		return jsonObject.toMap();
 	}
 }
