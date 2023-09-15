@@ -36,6 +36,7 @@ public class AccountController {
     AccountDto getAccount(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
+
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -62,13 +63,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    AccountDto getAccountWhenLogin(Principal principal,@RequestHeader("Authorization") @NonNull String bearerToken) {
-        try {
-            log.info(principal.toString());
-            log.info(principal.getName());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    AccountDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
        String email = userService.getEmailFromBearerToken(bearerToken);
         return userService.getUserByEmail(email);
     }
