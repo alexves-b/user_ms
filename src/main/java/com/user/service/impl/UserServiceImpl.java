@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
+
         if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
             throw new EmailIsBlank("email is blank");
         }
