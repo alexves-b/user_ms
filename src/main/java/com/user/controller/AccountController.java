@@ -1,6 +1,7 @@
 package com.user.controller;
 
 import com.netflix.discovery.EurekaClient;
+import com.user.dto.RequestDtoChangeEmail;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountStatisticResponseDto;
 import com.user.dto.secure.AccountSecureDto;
@@ -17,9 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -36,6 +37,7 @@ public class AccountController {
     AccountDto getAccount(@RequestParam String email) {
         return userService.getUserByEmail(email);
     }
+
     @Operation(summary = "Edit Account", description = "Обновление данных аккаунта", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
@@ -62,13 +64,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/me", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    AccountDto getAccountWhenLogin(Principal principal,@RequestHeader("Authorization") @NonNull String bearerToken) {
-        try {
-            log.info(principal.toString());
-            log.info(principal.getName());
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+    AccountDto getAccountWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
        String email = userService.getEmailFromBearerToken(bearerToken);
         return userService.getUserByEmail(email);
     }
@@ -108,10 +104,11 @@ public class AccountController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @RequestMapping(value = "/api/v1/account/me/change-email",
             consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE,
-            method = RequestMethod.PUT)
+            method = RequestMethod.POST)
     AccountDto editEmail(@RequestHeader("Authorization") @NonNull String bearerToken,
-                                  @RequestBody AccountDto accountDto ){
-        return userService.changeEmail(accountDto.getEmail(),bearerToken);
+                                  @RequestBody RequestDtoChangeEmail requestDtoChangeEmail ){
+        log.info(requestDtoChangeEmail.getEmail().getEmail());
+        return userService.changeEmail(requestDtoChangeEmail.getEmail().getEmail(),bearerToken);
     }
     @Operation(summary = "edit Password", description = "Обновление авторизованного аккаунта",
             tags = {"Account service"})
@@ -199,7 +196,6 @@ public class AccountController {
         return new AccountStatisticResponseDto();
     }
 
-
     @Operation(summary = "Get Account By statusCode",
             description = "Позволяет получать аккаунты относительно запрашиваемого статуса", tags = {"Account service"})
     @ApiResponses(value = {
@@ -251,5 +247,16 @@ public class AccountController {
     long getAllUsersCount() {
         return userService.getUserCount();
     }
-}
 
+    @Operation(summary = "get country list when login",
+            description = "Получение своих данных при входе на сайт", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @GetMapping(value = "/api/v1/geo/country", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    Map getCountryWhenLogin(@RequestHeader("Authorization") @NonNull String bearerToken) {
+        return userService.getCountryList();
+    }
+
+}
