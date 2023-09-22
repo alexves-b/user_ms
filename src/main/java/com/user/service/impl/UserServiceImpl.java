@@ -47,6 +47,8 @@ public class UserServiceImpl implements UserService {
 	private final KafkaProducer kafkaProducer;
 	private final AdminClient adminClient;
 	private final BCryptPasswordEncoder passwordEncoder;
+	private final KafkaProducerForJson kafkaProducerForJson;
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public AccountDto getUserByEmail(String email) {
@@ -58,6 +60,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public AccountSecureDto createUser(AccountSecureDto accountSecureDto) {
+
 		if (accountSecureDto.getEmail().isEmpty() || accountSecureDto.getEmail().isBlank()) {
 			throw new EmailIsBlank("email is blank");
 		}
@@ -73,6 +76,10 @@ public class UserServiceImpl implements UserService {
 				.roles("ROLE_USER").build();
 		userRepository.save(user);
 		log.info("User was created:  " + user);
+
+		if (userRepository.findById(user.getId()).isPresent()){
+			kafkaProducerForJson.sendMessageForFriends(objectMapper.convertValue(user, AccountForFriends.class));
+		}
 		return new AccountSecureDto(user.getId(), user.getFirstName(),
 				user.getLastName(), user.getEmail(), user.getPassword(), user.getRoles());
 	}
