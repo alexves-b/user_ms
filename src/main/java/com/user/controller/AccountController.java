@@ -11,6 +11,7 @@ import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -168,8 +169,8 @@ public class AccountController {
     Long deleteAccountById(@PathVariable Long id) {
         return userService.deleteUserById(id);
     }
-    @Operation(summary = "Get all accounts, not work",
-            description = "Позволяет получить все аккаунты, не реализован", tags = {"Account service"})
+    @Operation(summary = "Get all accounts",
+            description = "Позволяет получить все аккаунты", tags = {"Account service"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -221,8 +222,6 @@ public class AccountController {
                                    @RequestParam(name = "limit", defaultValue = "3") String limit) {
         return userService.searchUser(userFullName, offset, limit);
     }
-
-
     @Operation(summary = "Block/unblock user",
             description = "блокировка / разблокировка пользователя", tags = {"Account service"})
     @ApiResponses(value = {
@@ -234,8 +233,6 @@ public class AccountController {
     void blockUser(@RequestParam(value = "id") Long id) {
         userService.blockUser(id);
     }
-
-
     @Operation(summary = "all users count",
             description = "всего пользователей", tags = {"Account service"})
     @ApiResponses(value = {
@@ -247,7 +244,6 @@ public class AccountController {
     long getAllUsersCount() {
         return userService.getUserCount();
     }
-
     @Operation(summary = "get country list when login",
             description = "Получение своих данных при входе на сайт", tags = {"Account service"})
     @ApiResponses(value = {
