@@ -255,4 +255,15 @@ public class AccountController {
         return userService.getCountryList();
     }
 
+    @Operation(summary = "Get user List by search",
+            description = "Получение своих данных при входе на сайт", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @GetMapping(value = "/api/v1/account/search_user", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    List<AccountDto> searchUserForFrontend(@RequestHeader("Authorization") @NonNull String bearerToken, @RequestParam String author, @RequestParam Integer size) {
+        return userService.searchUser(author,"0","5");
+    }
+
 }
