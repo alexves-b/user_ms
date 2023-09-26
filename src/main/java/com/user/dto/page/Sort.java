@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class Sort {
-    boolean unsorted;
-    boolean sorted;
-    boolean empty;
+    boolean unsorted = false;
+    boolean sorted = true;
+    boolean empty = false;
 }

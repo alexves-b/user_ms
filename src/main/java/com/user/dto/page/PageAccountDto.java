@@ -1,9 +1,11 @@
 package com.user.dto.page;
 
 import com.user.dto.account.AccountDto;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class PageAccountDto {
 
     long totalElements;
@@ -27,6 +29,5 @@ public class PageAccountDto {
     int number;
 
     boolean empty;
-
 
 }

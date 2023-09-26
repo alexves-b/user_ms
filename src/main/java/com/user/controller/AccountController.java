@@ -4,6 +4,8 @@ import com.netflix.discovery.EurekaClient;
 import com.user.dto.RequestDtoChangeEmail;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountStatisticResponseDto;
+import com.user.dto.page.PageAccountDto;
+import com.user.dto.page.Sort;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.dto.account.AccountStatisticRequestDto;
 import com.user.model.User;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -262,8 +265,13 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")})
     @GetMapping(value = "/api/v1/account/search_user", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    List<AccountDto> searchUserForFrontend(@RequestHeader("Authorization") @NonNull String bearerToken, @RequestParam String author, @RequestParam Integer size) {
-        return userService.searchUser(author,"0","5");
+    PageAccountDto searchUserForFrontend(@RequestHeader("Authorization") @NonNull String bearerToken, @RequestParam String author, @RequestParam Integer size) {
+        Optional<List<AccountDto>> list = Optional.ofNullable(userService.searchUser(author, "0", "5"));
+        return PageAccountDto.builder()
+                .totalPages(list.get().size())
+                .totalPages(1)
+                .sort(new Sort())
+                .numberOfElements(3).first(true).last(true).size(list.get().size()).content(list.get().get(0))
+                .build();
     }
-
 }
