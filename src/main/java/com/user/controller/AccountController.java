@@ -267,11 +267,13 @@ public class AccountController {
     @GetMapping(value = "/api/v1/account/search_user", consumes = MediaType.ALL_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     PageAccountDto searchUserForFrontend(@RequestHeader("Authorization") @NonNull String bearerToken, @RequestParam String author, @RequestParam Integer size) {
         Optional<List<AccountDto>> list = Optional.ofNullable(userService.searchUser(author, "0", "5"));
-        return PageAccountDto.builder()
-                .totalPages(list.get().size())
+        return list.map(accountDtos -> PageAccountDto.builder()
+                .totalPages(accountDtos.size())
                 .totalPages(1)
                 .sort(new Sort())
-                .numberOfElements(3).first(true).last(true).size(list.get().size()).content(list.get().get(0))
-                .build();
+                .numberOfElements(3)
+                .first(true).last(true)
+                .size(accountDtos.size()).content(accountDtos.get(0))
+                .build()).orElse(PageAccountDto.builder().build());
     }
 }
