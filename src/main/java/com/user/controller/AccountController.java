@@ -21,10 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -275,5 +272,18 @@ public class AccountController {
                 .first(true).last(true)
                 .size(accountDtos.size()).content(accountDtos.get(0))
                 .build()).orElse(PageAccountDto.builder().build());
+    }
+
+    @Operation(summary = "confirmation email",
+            description = "Подтверждение емейла при регистрации", tags = {"Account service"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")})
+    @ResponseBody
+    @GetMapping(value = "/api/v1/approve/{uuid}", consumes = MediaType.ALL_VALUE,
+            produces = MediaType.TEXT_HTML_VALUE)
+     public void confirmationEmail(@PathVariable UUID uuid) {
+        userService.compareUUid(uuid);
     }
 }

@@ -26,6 +26,21 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
 
+  mail:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: 'true'
+            required: 'true'
+          auth: 'true'
+          port: '25'
+        transport:
+          protocol: smtp
+    host:  smtp.gmail.com
+    username: noreplymysoc@gmail.com
+    password: kzgc gwvy snws rjrw
+
 
 liquibase:
   enabled: true
