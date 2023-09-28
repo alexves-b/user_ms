@@ -17,10 +17,12 @@ import com.user.kafka.KafkaProducer;
 import com.user.kafka.KafkaProducerForJson;
 import com.user.model.User;
 import com.user.repository.UserRepository;
+import com.user.service.EmailService;
 import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -49,6 +51,7 @@ public class UserServiceImpl implements UserService {
 	private final BCryptPasswordEncoder passwordEncoder;
 	private final KafkaProducerForJson kafkaProducerForJson;
 	private final ObjectMapper objectMapper;
+	private final EmailServiceImpl emailService;
 
 	@Override
 	public AccountDto getUserByEmail(String email) {
@@ -73,10 +76,13 @@ public class UserServiceImpl implements UserService {
 				.lastName(accountSecureDto.getLastName())
 				.password(accountSecureDto.getPassword())
 				.regDate(LocalDateTime.now())
+				.uuidConfirmationEmail(UUID.randomUUID())
+				.isConfirmed(false)
+				.dateToConfirmation(LocalDateTime.now().plusDays(3))
 				.roles("ROLE_USER").build();
 		userRepository.save(user);
 		log.info("User was created:  " + user);
-
+		emailService.emailConfirmmationWhehRegistered(user.getEmail(), String.valueOf(user.getUuidConfirmationEmail()));
 		if (userRepository.findById(user.getId()).isPresent()){
 			kafkaProducerForJson.sendMessageForFriends(objectMapper.convertValue(user, AccountForFriends.class));
 		}
@@ -311,5 +317,27 @@ public class UserServiceImpl implements UserService {
 		jsonObject.put("Грузия",georgia.toList());
 		System.out.println(jsonObject.toMap());
 		return jsonObject.toMap();
+	}
+	@Transactional
+	public void compareUUid(UUID uuid) {
+		User user = (userRepository.findByUuidConfirmationEmail(uuid)
+				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
+		user.setIsConfirmed(true);
+		log.info("user with email: " +user.getEmail() + " was confirmed");
+	}
+
+	@Scheduled(cron = "0 0 0 * * ?")
+	public void deleteNotConfirmedAccount() {
+		try {
+			ArrayList <User> listForDeletion = userRepository.findUserByNotConfirmedAndConfirmationDateBeforeNow()
+					.orElseThrow(() -> new RuntimeException("No user for deletion without not confirmed email"));
+			log.info("time when was deleted not confirmed users: - " + LocalDateTime.now());
+			log.info(listForDeletion.toString());
+			userRepository.deleteAll(listForDeletion);
+			log.info("users was deleted!");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			log.warn(ex.getMessage());
+		}
 	}
 }

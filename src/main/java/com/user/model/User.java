@@ -8,9 +8,13 @@ import com.user.dto.account.AccountDto;
 import com.user.dto.account.StatusCodeType;
 import com.user.dto.secure.AccountSecureDto;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
+import org.joda.time.DateTime;
+
 import javax.persistence.*;
 import java.security.Timestamp;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -42,6 +46,9 @@ public class User {
     String city;
     String country;
     String gender;
+
+    UUID uuidConfirmationEmail;
+    Boolean isConfirmed = false;
     StatusCodeType statusCode;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -65,4 +72,5 @@ public class User {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime deletionDate;
+    LocalDateTime dateToConfirmation;
 }
