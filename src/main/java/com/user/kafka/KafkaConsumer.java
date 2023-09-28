@@ -12,10 +12,10 @@ public class KafkaConsumer {
 	@Value(value = "${spring.application.name}")
 	private String groupId;
 
-	private final String KEYWORD_FOR_CONSUMER = "WORLD";
-
-	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
-	public void listenGroupAuth(String message) {
-		log.info("--|< message '{}' received from group '{}'", message, groupId);
-	}
+//  No need to take anything
+//
+//	@KafkaListener(topics = "auth-topic", groupId = "${spring.application.name}", containerFactory = "kafkaListenerContainerFactory")
+//	public void listenGroupAuth(String message) {
+//		log.info("--|< message '{}' received from group '{}'", message, groupId);
+//	}
 }

@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>com.storage</groupId>
 			<artifactId>storage-demo</artifactId>
-			<version>0.0.2-20230824.174336-1</version>
+			<version>0.0.6-20230928.191135-1</version>
 		</dependency>
 
 		<dependency>
