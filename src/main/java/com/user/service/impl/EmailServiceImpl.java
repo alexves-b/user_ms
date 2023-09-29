@@ -3,6 +3,7 @@ package com.user.service.impl;
 import com.user.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,8 +26,8 @@ public class EmailServiceImpl implements EmailService {
     public void confirmationForChangeEmail() {
 
     }
-    private static final String NOREPLY_ADDRESS = "noreplymysoc@mail.ru";
-
+    @Value("${spring.mail.username}")
+    private String mailServerUsername;
     @Autowired
     private JavaMailSender emailSender;
 
@@ -34,7 +35,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendSimpleMessage(String to, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(NOREPLY_ADDRESS);
+            message.setFrom(mailServerUsername);
             message.setTo(to);
             message.setSubject(subject);
             message.setText(text);
