@@ -25,7 +25,7 @@ public class EmailServiceImpl implements EmailService {
     public void confirmationForChangeEmail() {
 
     }
-    private static final String NOREPLY_ADDRESS = "noreply@socialnet.ru";
+    private static final String NOREPLY_ADDRESS = "noreplymysoc@mail.ru";
 
     @Autowired
     private JavaMailSender emailSender;
