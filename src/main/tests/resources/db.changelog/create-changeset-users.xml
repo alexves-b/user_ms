@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
+
+    <changeSet id="1688797489875-2" author="Alex">
+        <sql>
+            SET timezone = 'Europe/Moscow';
+        </sql>
+        <createTable  tableName="users">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_user"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+            <column name="first_name" type="VARCHAR(255)"/>
+            <column name="last_name" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR">
+                <constraints nullable="false" unique="true" uniqueConstraintName="email_unique_key"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="roles" type="VARCHAR(255)"/>
+            <column name="about" type="VARCHAR(255)"/>
+            <column name="authority" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="photo" type="VARCHAR(255)"/>
+            <column name="profile_cover" type="VARCHAR(255)"/>
+            <column name="city" type="VARCHAR(255)"/>
+            <column name="country" type="VARCHAR(255)"/>
+            <column name="status_code" type="VARCHAR(255)"/>
+            <column name="reg_date" type="date"/>
+            <column name="birth_date" type="date"/>
+            <column name="message_permission" type="VARCHAR(255)"/>
+            <column name="last_online_time" type="date"/>
+            <column name="is_online" type="VARCHAR(255)"/>
+            <column name="is_blocked" type="VARCHAR(255)"/>
+            <column name="emoji_status" type="VARCHAR(255)"/>
+            <column name="created_on" type="date"/>
+            <column name="updated_on" type="date"/>
+            <column name="deletion_date" type="date"/>
+
+
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

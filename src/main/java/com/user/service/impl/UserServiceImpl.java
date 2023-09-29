@@ -333,11 +333,14 @@ public class UserServiceImpl implements UserService {
 		return jsonObject.toMap();
 	}
 	@Transactional
-	public void compareUUid(UUID uuid) {
+	public String compareUUid(UUID uuid) {
 		User user = (userRepository.findByUuidConfirmationEmail(uuid)
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
 		user.setIsConfirmed(true);
-		log.info("user with email: " +user.getEmail() + " was confirmed");
+		user.setDateToConfirmation(null);
+		log.info("user with email: " + user.getEmail() + " was confirmed");
+		userRepository.save(user);
+		return user.getEmail();
 	}
 
 	@Scheduled(cron = "0 0 0 * * ?")
