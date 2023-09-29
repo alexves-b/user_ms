@@ -37,9 +37,9 @@ spring:
           port: '25'
         transport:
           protocol: smtp
-    host:  smtp.gmail.com
-    username: noreplymysoc@gmail.com
-    password: kzgc gwvy snws rjrw
+    host: smtp.mail.ru
+    username: noreplymysoc@mail.ru
+    password: W9jQKauQEHDgqee0bRpT
 
 
 liquibase:
