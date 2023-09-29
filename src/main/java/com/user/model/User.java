@@ -10,6 +10,7 @@ import com.user.dto.secure.AccountSecureDto;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.joda.time.DateTime;
+import reactor.util.annotation.Nullable;
 
 import javax.persistence.*;
 import java.security.Timestamp;
@@ -72,5 +73,6 @@ public class User {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     LocalDateTime deletionDate;
+    @Nullable
     LocalDateTime dateToConfirmation;
 }

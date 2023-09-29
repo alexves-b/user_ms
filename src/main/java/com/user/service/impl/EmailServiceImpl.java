@@ -18,8 +18,7 @@ public class EmailServiceImpl implements EmailService {
     public void emailConfirmmationWhehRegistered(String email, String uuid) {
     String text = "Уважаемый пользователь, Ваш емейл "+ email +" был предоставлен для регистрации " +
             "в социальной сети \"Собутыльники\". \n Подтвердите свой емейл перейдя по ссылке: \n " +
-            "http://5.63.154.191:8085/api/vi/approve/"+uuid +".\n В случае отсутствия подтверждения емейла, через три дня аккаунт будет удален.";
-
+            "http://5.63.154.191:8088/users/approve/"+uuid +".\n В случае отсутствия подтверждения емейла, через три дня аккаунт будет удален.";
         sendSimpleMessage(email, "Подтверждение емейла", text);
     }
     @Override
