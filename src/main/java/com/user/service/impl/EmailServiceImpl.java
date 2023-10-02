@@ -25,6 +25,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void confirmationForChangeEmail() {
 
+
+
     }
     @Value("${spring.mail.username}")
     private String mailServerUsername;
