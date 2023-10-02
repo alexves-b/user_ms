@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public class EmailConfirmationController {
     @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/{uuid}",
-            produces = MediaType.TEXT_HTML_VALUE)
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationEmail(@PathVariable UUID uuid,Model model) {
         log.warn(uuid.toString());
         String email = userService.compareUUid(uuid);

@@ -103,6 +103,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User editUser(AccountDto accountDto, String email) {
 		    accountDto.setEmail(email);
+		//Добавляем логку изменения емейла.
+		//Отправляем письмо о том, что емейл адрес изменен.
+		//По поводу емейла, надо проверять что отправка успешная.
+		//Если не успешная повторять 2 раза.
 			return editUser(accountDto);
 	}
 
@@ -318,13 +322,12 @@ public class UserServiceImpl implements UserService {
 		System.out.println(jsonObject.toMap());
 		return jsonObject.toMap();
 	}
-	@Transactional
 	public String compareUUid(UUID uuid) {
 		User user = (userRepository.findByUuidConfirmationEmail(uuid)
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
 		user.setIsConfirmed(true);
 		user.setDateToConfirmation(null);
-		log.info("user with email: " + user.getEmail() + " was confirmed");
+		log.warn("user with email: " + user.getEmail() + " was confirmed");
 		userRepository.save(user);
 		return user.getEmail();
 	}
