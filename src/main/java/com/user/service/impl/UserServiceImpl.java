@@ -346,6 +346,12 @@ public class UserServiceImpl implements UserService {
 		return user.getEmail();
 	}
 
+	public String getEmailByUUid(UUID uuid) {
+		User user = (userRepository.findByUuidConfirmationEmail(uuid)
+				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
+		return user.getEmail();
+	}
+
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteNotConfirmedAccount() {
 		try {

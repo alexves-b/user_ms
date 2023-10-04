@@ -23,10 +23,23 @@ import java.util.UUID;
 public class EmailConfirmationController {
 
     private final UserServiceImpl userService;
-    @Operation(summary = "confirmation email",
+    @Operation(summary = "return page for confirmation",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/{uuid}",
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
+    public String PageConfirmationEmail(@PathVariable UUID uuid,Model model) {
+        log.warn(uuid.toString());
+        String email = userService.getEmailByUUid(uuid);
+        Map <String,String> map = new HashMap<>();
+        map.put("email",email);
+        model.addAllAttributes(map);
+        return "index";
+    }
+
+    @Operation(summary = "confirmation email",
+            description = "Подтверждение емейла при регистрации", tags = {"Account service"})
+    @RequestMapping(value = "/api/v1/approve/{uuid}",
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
     public String confirmationEmail(@PathVariable UUID uuid,Model model) {
         log.warn(uuid.toString());
         String email = userService.compareUUid(uuid);
@@ -35,4 +48,6 @@ public class EmailConfirmationController {
         model.addAllAttributes(map);
         return "index";
     }
+
+
 }
