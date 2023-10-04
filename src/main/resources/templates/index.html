@@ -6,7 +6,28 @@
 </head>
 <body>
 
-<h1>Ваш емейл (<span th:text="${email}"></span>) подтвержден!</h1>
+<h1>Страничка для подтверждения Вашего емейла: (<span th:text="${email}"></span>)</h1>
+
+
+
+<form></form>
+
+<form class="question_control_form" name="restore_password_form" method="POST" action="users/approve/my_email">
+    <div class="guruweba_example_caption">
+        <h1>Выберите контрольный вопрос, используемый при восстановлени емейла!</h1></div>
+    <div class="guruweba_example_infofield">Вопрос?</div>
+    <select name="question_control">
+        <option value="1">Не выбрано.</option>
+        <option value="1">Девичья фамилия матери?</option>
+        <option value="2">Кличка Вашего питомца?</option>
+        <option value="3">Любимый город?</option>
+        <option value="3">Любимый напиток?</option>
+        <option value="3">Ваше мечта?</option>
+    </select>
+    <div>Ответ</div>
+    <input type="text" name="name" required="required">
+    <input type="submit" name="submit_btn" value="Отправить">
+</form>
 <br><br>
 
 </body>
