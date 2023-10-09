@@ -16,7 +16,9 @@ import com.user.exception.EmailNotUnique;
 import com.user.jwt_token.JwtTokenUtils;
 import com.user.kafka.KafkaProducer;
 import com.user.kafka.KafkaProducerForJson;
+import com.user.model.RecoveryAnswer;
 import com.user.model.User;
+import com.user.repository.AnwserRepository;
 import com.user.repository.UserRepository;
 import com.user.service.EmailService;
 import com.user.service.UserService;
@@ -54,6 +56,7 @@ public class UserServiceImpl implements UserService {
 	private final KafkaProducerForJson kafkaProducerForJson;
 	private final ObjectMapper objectMapper;
 	private final EmailServiceImpl emailService;
+	private final AnwserRepository anwserRepository;
 
 	@Override
 	public AccountDto getUserByEmail(String email) {
@@ -292,6 +295,14 @@ public class UserServiceImpl implements UserService {
 						("user with email: " + email + " not found"));
 		user.setPassword(passwordBCrypt);
 		log.info("Password for user " +user.getEmail() + " was changed");
+		try {
+			emailService.sendSimpleMessage(email,"Изменение пароля в соц сети!",
+					"Отправляем Вам уведомление об изменении " +
+							"пароля в нашей социальной сети. " +
+							"Был изменень пароль для пользователя: " +user.getEmail());
+		}catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
 		return new AccountDto(user);
 	}
 	public void changeUserDetails(User user, AccountDto accountDto){
@@ -336,16 +347,18 @@ public class UserServiceImpl implements UserService {
 		System.out.println(jsonObject.toMap());
 		return jsonObject.toMap();
 	}
-	public String compareUUid(UUID uuid) {
+	@Transactional
+	public void addRecoveryQuestionAndConfirmEmail(UUID uuid,int numberOfQuestion, String answer) {
 		User user = (userRepository.findByUuidConfirmationEmail(uuid)
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
 		user.setIsConfirmed(true);
 		user.setDateToConfirmation(null);
+		String answerEncrypted = passwordEncoder.encode(answer);
+		RecoveryAnswer recoveryAnswer = new RecoveryAnswer(numberOfQuestion,answerEncrypted,user);
+		anwserRepository.save(recoveryAnswer);
+		//Добавить в таблицу id пользователя, id вопроса, и стринговый шифрованный ответ.
 		log.warn("user with email: " + user.getEmail() + " was confirmed");
-		userRepository.save(user);
-		return user.getEmail();
 	}
-
 	public String getEmailByUUid(UUID uuid) {
 		User user = (userRepository.findByUuidConfirmationEmail(uuid)
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));

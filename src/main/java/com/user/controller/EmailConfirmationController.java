@@ -1,5 +1,6 @@
 package com.user.controller;
 
+import com.user.service.impl.EmailServiceImpl;
 import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -21,7 +22,8 @@ import java.util.UUID;
 @Slf4j
 @Controller
 public class EmailConfirmationController {
-
+    private UUID uuidFromController;
+    private String email;
     private final UserServiceImpl userService;
     @Operation(summary = "return page for confirmation",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
@@ -29,7 +31,8 @@ public class EmailConfirmationController {
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String PageConfirmationEmail(@PathVariable UUID uuid,Model model) {
         log.warn(uuid.toString());
-        String email = userService.getEmailByUUid(uuid);
+        uuidFromController = uuid;
+        email = userService.getEmailByUUid(uuid);
         Map <String,String> map = new HashMap<>();
         map.put("email",email);
         model.addAllAttributes(map);
@@ -38,16 +41,17 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/approve/{uuid}",
+    @RequestMapping(value = "/api/v1/approve/my_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
-    public String confirmationEmail(@PathVariable UUID uuid,Model model) {
-        log.warn(uuid.toString());
-        String email = userService.compareUUid(uuid);
+    public String confirmationEmail(Model model,
+                                    @RequestParam String answer,
+                                    @RequestParam Integer numberQuestion ) {
+        log.info(String.valueOf(uuidFromController));
         Map <String,String> map = new HashMap<>();
         map.put("email",email);
         model.addAllAttributes(map);
-        return "index";
+        userService.addRecoveryQuestionAndConfirmEmail(uuidFromController,numberQuestion,answer);
+        return "approved";
     }
-
 
 }
