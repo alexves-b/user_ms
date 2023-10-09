@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+        http://www.liquibase.org/xml/ns/pro">
+    <changeSet id="insert-into-recovery-questions" author="Alex">
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Не выбрано"/>
+        </insert>
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Девичья фамилия матери?"/>
+        </insert>
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Кличка Вашего питомца?"/>
+        </insert>
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Ваш любимый город?"/>
+        </insert>
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Ваш любимый напиток?"/>
+        </insert>
+        <insert tableName="recovery_questions">
+            <column name="id" autoIncrement="true"/>
+            <column name="question" value="Ваша мечта?"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
