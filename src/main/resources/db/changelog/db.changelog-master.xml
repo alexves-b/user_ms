@@ -11,4 +11,7 @@ xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         <include file="create-changeset-users.xml" relativeToChangelogFile="true"/>
         <include file="insert-changeset-users-table.xml" relativeToChangelogFile="true"/>
         <include file="add-column-to-users.xml" relativeToChangelogFile="true"/>
+        <include file="crete-table-recovery-questions.xml" relativeToChangelogFile="true"/>
+        <include file="insert-changeset-recovery-questions.xml" relativeToChangelogFile="true"/>
+        <include file="create-table-recovery-answer.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

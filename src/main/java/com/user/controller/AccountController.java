@@ -194,8 +194,7 @@ public class AccountController {
             method = RequestMethod.GET)
     AccountStatisticResponseDto getListAllAccounts(@RequestBody AccountStatisticRequestDto accountStatisticRequestDto) {
         userService.getStatistic(accountStatisticRequestDto);
-        return new AccountStatisticResponseDto();
-    }
+        return new AccountStatisticResponseDto();}
 
     @Operation(summary = "Get Account By statusCode",
             description = "Позволяет получать аккаунты относительно запрашиваемого статуса", tags = {"Account service"})
