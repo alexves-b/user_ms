@@ -267,6 +267,15 @@ public class UserServiceImpl implements UserService {
 			log.warn("email: " + email + " not unique!");
 			throw new EmailNotUnique("email: " + email + " not unique!");
 		}
+
+		//Добавляем проверку емейла. Отправляем письма. Если все норм - меняе емейл.
+		emailService.sendSimpleMessage(user.getEmail(),
+				"Запрос на изменение емейла",
+				"Код для подтверждения 1311345");
+
+		emailService.sendSimpleMessage(email,"Запрос на изменение емейла",
+				"Перейдя по ссылке введите код или ответ на контрольный вопрос");
+
 		log.info(email);
 		user.setEmail(email);
 		return new AccountDto(user);
