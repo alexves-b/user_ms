@@ -284,8 +284,8 @@ public class UserServiceImpl implements UserService {
 		try {
 			emailService.sendSimpleMessage(email,"Изменение пароля в соц сети!",
 					"Отправляем Вам уведомление об изменении " +
-							"пароля в нашей социальной сети. " +
-							"Был изменень пароль для пользователя: " +user.getEmail());
+							"пароля в нашей социальной сети \" Собутыльники \". " +
+							"Был изменен пароль для пользователя: " +user.getEmail());
 		}catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
