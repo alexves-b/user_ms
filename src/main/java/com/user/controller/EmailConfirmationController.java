@@ -97,7 +97,7 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email_code",
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationApprovedPage(Model model,
                                               @RequestParam Integer code) {
