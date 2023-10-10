@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.client.AdminClient;
+import com.user.dto.ConfirmationCode;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountForFriends;
 import com.user.dto.account.AccountStatisticRequestDto;
@@ -55,6 +56,8 @@ public class UserServiceImpl implements UserService {
 	private final ObjectMapper objectMapper;
 	private final EmailServiceImpl emailService;
 	private final AnwserRepository anwserRepository;
+	private final ConfirmationCode codeString;
+
 	@Override
 	public AccountDto getUserByEmail(String email) {
 		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
@@ -267,7 +270,7 @@ public class UserServiceImpl implements UserService {
 			log.warn("email: " + email + " not unique!");
 			throw new EmailNotUnique("email: " + email + " not unique!");
 		}
-		Integer code = (int) (Math.random() *10000);
+		Integer code = Integer.parseInt(codeString.toString());
 		emailService.confirmationForChangeEmail(user.getEmail(),email,user.getUuidConfirmationEmail(),code);
 		//Добавляем проверку емейла. Отправляем письма. Если все норм - меняе емейл.
 		log.info(email);
@@ -367,5 +370,10 @@ public class UserServiceImpl implements UserService {
 			ex.printStackTrace();
 			log.warn(ex.getMessage());
 		}
+	}
+
+	public boolean checkConfirmationCode(Integer code) {
+		log.info(codeString.toString());
+        return codeString.equals(code.toString());
 	}
 }

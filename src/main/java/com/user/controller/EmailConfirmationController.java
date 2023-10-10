@@ -56,11 +56,11 @@ public class EmailConfirmationController {
 
     @Operation(summary = "return page for confirmation",
             description = "Страница подтверждерния изменения емейла", tags = {"Account service"})
-    @RequestMapping(value = "api/v1/approve/change/",
+    @RequestMapping(value = "api/v1/approve/change",
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String pageChangeEmail(Model model, @RequestParam UUID uuid,@RequestParam String presentEmail, @RequestParam String futureEmail) {
-
         Map <String,String> map = new HashMap<>();
+        log.info("viev page edit email");
         map.put("email",presentEmail);
         map.put("future_email",futureEmail);
         model.addAllAttributes(map);
@@ -69,20 +69,25 @@ public class EmailConfirmationController {
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.PUT)
     public String confirmationEditEmailByCode(Model model,
-                                    @RequestParam String code) {
-  //Сравнение кода отправленного на емейлы.
+                                    @RequestParam Integer code) {
+        log.info(code.toString());
+       if (!userService.checkConfirmationCode(code)) {
+           return null;
+       }
         return "approved";
     }
 
     @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.PUT)
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
     public String confirmationEditEmailByUUID(Model model,
                                         @RequestParam String answer,
                                         @RequestParam Integer numberQuestion ) {
+        log.info(answer);
+        log.info(numberQuestion.toString());
         //сравнение контрольныйх вовпросов
         Map <String,String> map = new HashMap<>();
         map.put("email",email);
