@@ -262,7 +262,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public AccountDto changeEmail(String email,String bearerToken) {
 		String emailFromBearerToken = getEmailFromBearerToken(bearerToken);
-
 		User user = userRepository.findUserByEmail(emailFromBearerToken)
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + emailFromBearerToken + " not found"));
