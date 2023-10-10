@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.user.client.AdminClient;
+import com.user.dto.ConfirmationCode;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountForFriends;
 import com.user.dto.account.AccountStatisticRequestDto;
@@ -57,6 +58,7 @@ public class UserServiceImpl implements UserService {
 	private final ObjectMapper objectMapper;
 	private final EmailServiceImpl emailService;
 	private final AnwserRepository anwserRepository;
+	private final ConfirmationCode codeString;
 
 	@Override
 	public AccountDto getUserByEmail(String email) {
@@ -274,6 +276,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public AccountDto changeEmail(String email,String bearerToken) {
 		String emailFromBearerToken = getEmailFromBearerToken(bearerToken);
+
 		User user = userRepository.findUserByEmail(emailFromBearerToken)
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + emailFromBearerToken + " not found"));
@@ -281,17 +284,11 @@ public class UserServiceImpl implements UserService {
 			log.warn("email: " + email + " not unique!");
 			throw new EmailNotUnique("email: " + email + " not unique!");
 		}
-
+		Integer code = Integer.parseInt(codeString.toString());
+		emailService.confirmationForChangeEmail(user.getEmail(),email,user.getUuidConfirmationEmail(),code);
 		//Добавляем проверку емейла. Отправляем письма. Если все норм - меняе емейл.
-		emailService.sendSimpleMessage(user.getEmail(),
-				"Запрос на изменение емейла",
-				"Код для подтверждения 1311345");
-
-		emailService.sendSimpleMessage(email,"Запрос на изменение емейла",
-				"Перейдя по ссылке введите код или ответ на контрольный вопрос");
-
 		log.info(email);
-		user.setEmail(email);
+		//user.setEmail(email);
 		return new AccountDto(user);
 	}
 
@@ -387,5 +384,10 @@ public class UserServiceImpl implements UserService {
 			ex.printStackTrace();
 			log.warn(ex.getMessage());
 		}
+	}
+
+	public boolean checkConfirmationCode(Integer code) {
+		log.info("Правильный код:"+ codeString.toString());
+        return codeString.equals(code.toString());
 	}
 }
