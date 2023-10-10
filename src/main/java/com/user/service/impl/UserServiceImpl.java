@@ -55,7 +55,6 @@ public class UserServiceImpl implements UserService {
 	private final ObjectMapper objectMapper;
 	private final EmailServiceImpl emailService;
 	private final AnwserRepository anwserRepository;
-
 	@Override
 	public AccountDto getUserByEmail(String email) {
 		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
@@ -260,6 +259,7 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public AccountDto changeEmail(String email,String bearerToken) {
 		String emailFromBearerToken = getEmailFromBearerToken(bearerToken);
+
 		User user = userRepository.findUserByEmail(emailFromBearerToken)
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + emailFromBearerToken + " not found"));
@@ -267,17 +267,11 @@ public class UserServiceImpl implements UserService {
 			log.warn("email: " + email + " not unique!");
 			throw new EmailNotUnique("email: " + email + " not unique!");
 		}
-
+		Integer code = (int) (Math.random() *10000);
+		emailService.confirmationForChangeEmail(user.getEmail(),email,user.getUuidConfirmationEmail(),code);
 		//Добавляем проверку емейла. Отправляем письма. Если все норм - меняе емейл.
-		emailService.sendSimpleMessage(user.getEmail(),
-				"Запрос на изменение емейла",
-				"Код для подтверждения 1311345");
-
-		emailService.sendSimpleMessage(email,"Запрос на изменение емейла",
-				"Перейдя по ссылке введите код или ответ на контрольный вопрос");
-
 		log.info(email);
-		user.setEmail(email);
+		//user.setEmail(email);
 		return new AccountDto(user);
 	}
 

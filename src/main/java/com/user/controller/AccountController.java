@@ -109,6 +109,7 @@ public class AccountController {
     AccountDto editEmail(@RequestHeader("Authorization") @NonNull String bearerToken,
                                   @RequestBody RequestDtoChangeEmail requestDtoChangeEmail ){
         log.info(requestDtoChangeEmail.getEmail().getEmail());
+
         return userService.changeEmail(requestDtoChangeEmail.getEmail().getEmail(),bearerToken);
     }
     @Operation(summary = "edit Password", description = "Обновление авторизованного аккаунта",
