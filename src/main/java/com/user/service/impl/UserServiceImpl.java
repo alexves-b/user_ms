@@ -373,7 +373,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public boolean checkConfirmationCode(Integer code) {
-		log.info(codeString.toString());
+		log.info("Правильный код:"+ codeString.toString());
         return codeString.equals(code.toString());
 	}
 }

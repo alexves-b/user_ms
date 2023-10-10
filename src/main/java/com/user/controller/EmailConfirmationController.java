@@ -72,7 +72,7 @@ public class EmailConfirmationController {
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.PUT)
     public String confirmationEditEmailByCode(Model model,
                                     @RequestParam Integer code) {
-        log.info(code.toString());
+        log.info("код из контроллера"+code.toString());
        if (!userService.checkConfirmationCode(code)) {
            return null;
        }
