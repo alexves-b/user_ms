@@ -108,7 +108,7 @@ public class EmailConfirmationController {
             description = "Контроллер проверки кода", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
-    public String confirmationApprovedPage(Model model,
+    public String confirmationApprovedPage2(Model model,
                                            @RequestParam String answer,
                                            @RequestParam Integer numberQuestion ) {
         return "approved";
