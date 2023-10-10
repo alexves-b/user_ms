@@ -83,7 +83,7 @@ public class EmailConfirmationController {
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
-    public String confirmationEditEmailByUUID(Model model,
+    public void confirmationEditEmailByUUID(Model model,
                                         @RequestParam String answer,
                                         @RequestParam Integer numberQuestion ) {
         log.info(answer);
@@ -93,6 +93,24 @@ public class EmailConfirmationController {
         map.put("email",email);
         model.addAllAttributes(map);
         //userService.addRecoveryQuestionAndConfirmEmail(uuidFromController,numberQuestion,answer);
+    }
+
+    @Operation(summary = "confirmation email",
+            description = "Контроллер проверки кода", tags = {"Account service"})
+    @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
+    public String confirmationApprovedPage(Model model,
+                                              @RequestParam Integer code) {
+        return "approved";
+    }
+
+    @Operation(summary = "confirmation email",
+            description = "Контроллер проверки кода", tags = {"Account service"})
+    @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
+    public String confirmationApprovedPage(Model model,
+                                           @RequestParam String answer,
+                                           @RequestParam Integer numberQuestion ) {
         return "approved";
     }
 
