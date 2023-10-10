@@ -68,7 +68,7 @@ public class EmailConfirmationController {
     }
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.PUT)
     public String confirmationEditEmailByCode(Model model,
                                     @RequestParam Integer code) {
@@ -97,10 +97,13 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationApprovedPage(Model model,
                                               @RequestParam Integer code) {
+        Map <String,String> map = new HashMap<>();
+        map.put("email",email);
+        model.addAllAttributes(map);
         return "approved";
     }
 
