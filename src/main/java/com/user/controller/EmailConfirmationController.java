@@ -24,6 +24,7 @@ import java.util.UUID;
 public class EmailConfirmationController {
     private UUID uuidFromController;
     private String email;
+    private String futureEmail;
     private final UserServiceImpl userService;
     @Operation(summary = "return page for confirmation",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
@@ -61,6 +62,7 @@ public class EmailConfirmationController {
     public String pageChangeEmail(Model model, @RequestParam UUID uuid,@RequestParam String presentEmail, @RequestParam String futureEmail) {
         Map <String,String> map = new HashMap<>();
         log.info("viev page edit email");
+        futureEmail = presentEmail;
         map.put("email",presentEmail);
         map.put("future_email",futureEmail);
         model.addAllAttributes(map);
@@ -76,6 +78,9 @@ public class EmailConfirmationController {
        if (!userService.checkConfirmationCode(code)) {
            return null;
        }
+        Map <String,String> map = new HashMap<>();
+        map.put("email",futureEmail);
+        model.addAllAttributes(map);
         return "approved";
     }
 
@@ -83,7 +88,7 @@ public class EmailConfirmationController {
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
-    public void confirmationEditEmailByUUID(Model model,
+    public String confirmationEditEmailByUUID(Model model,
                                         @RequestParam String answer,
                                         @RequestParam Integer numberQuestion ) {
         log.info(answer);
@@ -93,6 +98,7 @@ public class EmailConfirmationController {
         map.put("email",email);
         model.addAllAttributes(map);
         //userService.addRecoveryQuestionAndConfirmEmail(uuidFromController,numberQuestion,answer);
+        return "approved";
     }
 
     @Operation(summary = "confirmation email",
