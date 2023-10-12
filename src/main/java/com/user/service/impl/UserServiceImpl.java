@@ -13,6 +13,7 @@ import com.user.dto.kafka.CommonNotifyTypeEnum;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailIsBlank;
 import com.user.exception.EmailNotUnique;
+import com.user.exception.UserRecoveryAnswerNotFound;
 import com.user.jwt_token.JwtTokenUtils;
 import com.user.kafka.KafkaProducer;
 import com.user.kafka.KafkaProducerForJson;
@@ -20,12 +21,10 @@ import com.user.model.RecoveryAnswer;
 import com.user.model.User;
 import com.user.repository.AnwserRepository;
 import com.user.repository.UserRepository;
-import com.user.service.EmailService;
 import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -373,6 +372,35 @@ public class UserServiceImpl implements UserService {
 
 	public boolean checkConfirmationCode(Integer code) {
 		log.info("Правильный код:"+ codeString.toString());
-        return codeString.equals(code.toString());
+		int correctCode = Integer.parseInt(String.valueOf(codeString));
+
+        return correctCode == code;
 	}
+
+	@Transactional
+	public boolean checkRecoveryQuestionAndAnswer(String futureEmail,String email, String answer, Integer numberOfQuestion) {
+		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
+				new UsernameNotFoundException("user with email: " + email + " not found"));
+		Long userId = user.getId();
+		RecoveryAnswer recoveryAnswer = anwserRepository.findAnswerByUserId(userId).orElseThrow(() ->
+				new UserRecoveryAnswerNotFound("answer with id: " + userId + " not found"));
+
+		String answerEncryptedFromRepository = passwordEncoder.encode(answer);
+		boolean compareAnswer = answerEncryptedFromRepository.equals(recoveryAnswer.getAnswerEncrypted());
+		boolean compareQuestions = recoveryAnswer.getNumberQuestion() == numberOfQuestion;
+
+		if (compareAnswer && compareQuestions) {
+			user.setEmail(futureEmail);
+			return  true;
+		}
+		return false;
+	}
+
+	@Transactional
+	public void setEmail(String oldEmail,String changedEmail) {
+		User user = userRepository.findUserByEmail(oldEmail).orElseThrow(() ->
+				new UsernameNotFoundException("user with email: " + oldEmail + " not found"));
+		user.setEmail(changedEmail);
+	}
+
 }
