@@ -67,6 +67,8 @@ public class EmailConfirmationController {
         model.addAllAttributes(map);
         return "editEmail";
     }
+
+
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
@@ -76,13 +78,16 @@ public class EmailConfirmationController {
         log.info("код из контроллера"+code.toString());
        if (!userService.checkConfirmationCode(code)) {
           throw new ConfirmationCodeNotCorrect("Введен не верный код подтверждения");
+       } else {
+           userService.setEmail(presentEmail,futureEmail);
+           Map <String,String> map = new HashMap<>();
+           map.put("email",futureEmail);
+           model.addAllAttributes(map);
+           return "approved";
        }
-       userService.setEmail(presentEmail,futureEmail);
-        Map <String,String> map = new HashMap<>();
-        map.put("email",futureEmail);
-        model.addAllAttributes(map);
-        return "approved";
     }
+
+
 
 
     @Operation(summary = "confirmation email",
@@ -99,11 +104,12 @@ public class EmailConfirmationController {
         if (!userService.checkRecoveryQuestionAndAnswer(futureEmail,presentEmail,answer,numberQuestion)) {
             throw new ConfirmationCodeNotCorrect("Введен не верный ответ на контрольный вопрос" +
                     " или не правильно выбран контрольный вопрос!");
+        } else {
+            Map <String,String> map = new HashMap<>();
+            map.put("email",futureEmail);
+            model.addAllAttributes(map);
+            return "approved";
         }
-        Map <String,String> map = new HashMap<>();
-        map.put("email",futureEmail);
-        model.addAllAttributes(map);
-        return "approved";
     }
 
 
