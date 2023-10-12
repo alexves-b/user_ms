@@ -2,6 +2,7 @@ package com.user.service.impl;
 
 import com.user.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -14,6 +15,11 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class EmailServiceImpl implements EmailService {
+    public String generateRandomSpecialCharacters(int length) {
+        RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(33, 45)
+                .build();
+        return pwdGenerator.generate(length);
+    }
 
     @Override
     public void emailConfirmmationWhehRegistered(String email, String uuid) {
@@ -27,7 +33,7 @@ public class EmailServiceImpl implements EmailService {
         String textForPresentEmail = "Уважаемый пользователь, Получен запрос на изменение емейла с "
                 + presentEmail + "в социальной сети \"Собутыльники\""
                 + "Емейл будет изменен с " + presentEmail + " на емейл " + futureEmail
-                + "Для подтверждения изменения введите на странице восстановления код: " + code;
+                + " Для подтверждения изменения введите на странице восстановления код: " + code;
 
         String textForFutureEmail = "Уважаемый пользователь, Вы запросиили изменение емейла \"в социальной сети \\\"Собутыльники\\\" с "+ presentEmail +"."
                + "\nЕмейл будет изменен с " + presentEmail + " на емейл " + futureEmail + "."+

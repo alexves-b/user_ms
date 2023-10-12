@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
 	public User getUserById(Long id) {
 		User user = userRepository.findById(id).orElseThrow(() ->
 				new UsernameNotFoundException("user with id: " + id + " not found"));
-		log.info("user with " + id + "was found");
+		log.info("user with id - " + id + " was found");
 		return user;
 	}
 	@Override
