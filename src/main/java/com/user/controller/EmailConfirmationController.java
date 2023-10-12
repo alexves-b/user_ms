@@ -85,8 +85,20 @@ public class EmailConfirmationController {
     }
 
     @Operation(summary = "confirmation email",
+            description = "Контроллер проверки кода", tags = {"Account service"})
+    @RequestMapping(value = "/api/v1/code/approve/change_email_code",
+            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
+    public String confirmationApprovedPage(Model model,
+                                           @RequestParam Integer code) {
+        Map <String,String> map = new HashMap<>();
+        map.put("email",email);
+        model.addAllAttributes(map);
+        return "approved";
+    }
+
+    @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.POST)
     public String confirmationEditEmailByUUID(Model model,
                                         @RequestParam String answer,
@@ -103,19 +115,7 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/code/approve/change_email_code",
-            produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
-    public String confirmationApprovedPage(Model model,
-                                              @RequestParam Integer code) {
-        Map <String,String> map = new HashMap<>();
-        map.put("email",email);
-        model.addAllAttributes(map);
-        return "approved";
-    }
-
-    @Operation(summary = "confirmation email",
-            description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationApprovedPage2(Model model,
                                            @RequestParam String answer,
