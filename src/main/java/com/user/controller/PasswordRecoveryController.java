@@ -56,8 +56,8 @@ public class PasswordRecoveryController {
             throw new ConfirmationCodeNotCorrect("Введен не верный ответ на контрольный вопрос" +
                     " или не правильно выбран контрольный вопрос!");
         } else {
-            userService.sendNewPasswordForUserEmail(newEmail);
-             Map<String,String> map = new HashMap<>();
+            userService.sendNewPasswordForNewUserEmail(oldEmail,newEmail);
+            Map<String,String> map = new HashMap<>();
             map.put("email",newEmail);
             model.addAllAttributes(map);
             return "recovery_approved";
