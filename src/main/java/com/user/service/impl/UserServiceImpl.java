@@ -386,8 +386,7 @@ public class UserServiceImpl implements UserService {
 		RecoveryAnswer recoveryAnswer = anwserRepository.findAnswerByUserId(userId).orElseThrow(() ->
 				new UserRecoveryAnswerNotFound("answer with id: " + userId + " not found"));
 
-		String answerEncryptedFromRepository = passwordEncoder.encode(answer);
-		boolean compareAnswer = answerEncryptedFromRepository.equals(recoveryAnswer.getAnswerEncrypted());
+		boolean compareAnswer = passwordEncoder.matches(answer,recoveryAnswer.getAnswerEncrypted());
 		boolean compareQuestions = recoveryAnswer.getNumberQuestion() == numberOfQuestion;
 
 		if (compareAnswer && compareQuestions) {
@@ -416,7 +415,7 @@ public class UserServiceImpl implements UserService {
 					"Отправляем Вам уведомление об изменении " +
 							"пароля в нашей социальной сети \" Собутыльники \". " +
 							"Был изменен пароль для пользователя: " +user.getEmail() +
-							"Новый пароль для входа: " + password);
+							" Новый пароль для входа: " + password);
 			user.setPassword(passwordBCrypt);
 			log.info("Password for user " +user.getEmail() + " was changed");
 			log.info("new password was send " +passwordBCrypt);
