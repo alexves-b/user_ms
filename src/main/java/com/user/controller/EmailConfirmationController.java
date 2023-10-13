@@ -74,9 +74,17 @@ public class EmailConfirmationController {
     @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.ALL_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationEditEmailByCode(Model model,
-                                    @RequestParam Integer code) {
-        log.info("код из контроллера"+code.toString());
-       if (!userService.checkConfirmationCode(code)) {
+                                    @RequestParam String code) {
+        int codeFromString;
+        try {
+            codeFromString = Integer.parseInt(code);
+        } catch (Exception exception){
+            exception.printStackTrace();
+            throw new ConfirmationCodeNotCorrect("Код подтверждения содержит только цифры");
+        }
+
+        log.info("код из контроллера" + codeFromString);
+       if (!userService.checkConfirmationCode(codeFromString)) {
           throw new ConfirmationCodeNotCorrect("Введен не верный код подтверждения");
        } else {
            userService.setEmail(presentEmail,futureEmail);
@@ -102,10 +110,11 @@ public class EmailConfirmationController {
         log.info(numberQuestion.toString());
         //сравнение контрольныйх впросов
 
-        if (!userService.checkRecoveryQuestionAndAnswer(futureEmail,presentEmail,answer,numberQuestion)) {
+        if (!userService.checkRecoveryQuestionAndAnswer(presentEmail,answer,numberQuestion)) {
             throw new ConfirmationCodeNotCorrect("Введен не верный ответ на контрольный вопрос" +
                     " или не правильно выбран контрольный вопрос!");
         } else {
+            userService.setEmail(presentEmail,futureEmail);
             log.info("Change email to: "+ futureEmail + " was confirmed by recovery question!" );
             Map <String,String> map = new HashMap<>();
             map.put("email",futureEmail);

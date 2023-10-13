@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+</head>
+<body>
+
+<h1>Страничка для восстановления пароля пользователя социальной сети "Собутыльники":</h1>
+
+
+
+<form></form>
+
+<form class="question_control_form" name="restore_password_form" method="get" action="/auth/recovery_bq/approved">
+    <div class="guruweba_example_caption">
+        <div>Введите емейл регистрации:</div>
+        <input type="text" name="oldEmail" required="required">
+        <br><br>
+
+        <div>Введите емейл куда выслать новый пароль:</div>
+        <input type="text" name="newEmail" required="required">
+        <br><br>
+        <h1>Выберите контрольный вопрос, указанный при регистрации?</h1></div>
+    <div class="guruweba_example_infofield">Вопрос?</div>
+    <select name="numberQuestion">
+        <option value="1">Не выбрано.</option>
+        <option value="2">Девичья фамилия матери?</option>
+        <option value="3">Кличка Вашего питомца?</option>
+        <option value="4">Любимый город?</option>
+        <option value="5">Любимый напиток?</option>
+        <option value="6">Ваше мечта?</option>
+    </select>
+    <div>Ответ</div>
+    <input type="text" name="answer" required="required">
+    <br><br>
+    <input type="submit" name="submit_btгn" value="Восстановить пароль">
+<br><br>
+</form>
+</body>
+</html>
