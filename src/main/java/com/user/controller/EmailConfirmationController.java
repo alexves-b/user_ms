@@ -71,7 +71,7 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Контроллер проверки кода", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email_code", consumes = MediaType.ALL_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationEditEmailByCode(Model model,
                                     @RequestParam Integer code) {
@@ -81,7 +81,6 @@ public class EmailConfirmationController {
        } else {
            userService.setEmail(presentEmail,futureEmail);
            log.info("change email to: "+ futureEmail + " was confirmed by code from preveous email!" );
-
            Map <String,String> map = new HashMap<>();
            map.put("email",futureEmail);
            model.addAllAttributes(map);
@@ -94,7 +93,7 @@ public class EmailConfirmationController {
 
     @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
-    @RequestMapping(value = "/api/v1/code/approve/change_email", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    @RequestMapping(value = "/api/v1/code/approve/change_email", consumes = MediaType.ALL_VALUE,
             produces = MediaType.TEXT_HTML_VALUE,method = RequestMethod.GET)
     public String confirmationEditEmailByUUID(Model model,
                                         @RequestParam String answer,
