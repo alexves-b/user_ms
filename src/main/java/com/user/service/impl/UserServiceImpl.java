@@ -417,21 +417,23 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(changedEmail);
 	}
 
+	@Transactional
 	public void sendNewPasswordForUserEmail(String email) {
 		User user = userRepository.findUserByEmail(email)
 				.orElseThrow(() -> new UsernameNotFoundException
 						("user with email: " + email + " not found"));
 		String password = generateRandomSpecialCharacters(8);
 		String passwordBCrypt = passwordEncoder.encode(password);
-		user.setPassword(passwordBCrypt);
-		log.info("Password for user " +user.getEmail() + " was changed");
-		log.info("new password was send " +passwordBCrypt);
+
 		try {
 			emailService.sendSimpleMessage(email,"Восстановление пароля в соц сети!",
 					"Отправляем Вам уведомление об изменении " +
 							"пароля в нашей социальной сети \" Собутыльники \". " +
 							"Был изменен пароль для пользователя: " +user.getEmail() +
 							"Новый пароль для входа: " + password);
+			user.setPassword(passwordBCrypt);
+			log.info("Password for user " +user.getEmail() + " was changed");
+			log.info("new password was send " +passwordBCrypt);
 		}catch (Exception ex) {
 			log.error(ex.getMessage());
 		}

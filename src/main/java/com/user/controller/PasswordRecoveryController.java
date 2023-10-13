@@ -15,7 +15,7 @@ package com.user.controller;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class PasswordRecoveryController {
 
@@ -25,7 +25,7 @@ public class PasswordRecoveryController {
             description = "Обработка запроса на отправку нового пароля на емейл", tags = {"Auth service"})
     @RequestMapping(value = "/password/recovery/",
             produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public void confirmationEditEmailByUUID(@RequestBody RequestDtoChangeEmail dto) {
+    public void sendNewPasswordToUser(@RequestBody RequestDtoChangeEmail dto) {
         log.info("email for recovery: " + dto.getEmail().getEmail());
         userService.sendNewPasswordForUserEmail(dto.getEmail().getEmail());
     }
@@ -34,7 +34,7 @@ public class PasswordRecoveryController {
             tags = {"Auth service"})
     @RequestMapping(value = "/recovery_bq",
             produces = MediaType.TEXT_HTML_VALUE, method = RequestMethod.GET)
-    public String validateEmailAndRecoveryQuestion() {
+    public String validateEmailAndRecoveryQuestion(Model model) {
         return "recovery";
     }
 
