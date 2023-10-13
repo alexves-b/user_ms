@@ -83,7 +83,7 @@ public class EmailConfirmationController {
             throw new ConfirmationCodeNotCorrect("Код подтверждения содержит только цифры");
         }
 
-        log.info("код из контроллера" + codeFromString);
+        log.info("код из контроллера: " + codeFromString + " емейл куда отправлен код: " + presentEmail);
        if (!userService.checkConfirmationCode(codeFromString)) {
           throw new ConfirmationCodeNotCorrect("Введен не верный код подтверждения");
        } else {
