@@ -25,6 +25,7 @@ import com.user.service.UserService;
 import com.user.service.UserSpecification;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.RandomStringGenerator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
@@ -378,7 +379,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Transactional
-	public boolean checkRecoveryQuestionAndAnswer(String futureEmail,String email, String answer, Integer numberOfQuestion) {
+	public boolean checkRecoveryQuestionAndAnswer(String email, String answer, Integer numberOfQuestion) {
 		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
 				new UsernameNotFoundException("user with email: " + email + " not found"));
 		Long userId = user.getId();
@@ -390,7 +391,6 @@ public class UserServiceImpl implements UserService {
 		boolean compareQuestions = recoveryAnswer.getNumberQuestion() == numberOfQuestion;
 
 		if (compareAnswer && compareQuestions) {
-			user.setEmail(futureEmail);
 			return  true;
 		}
 		return false;
@@ -403,4 +403,28 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(changedEmail);
 	}
 
+	public void sendNewPasswordForUserEmail(String email) {
+		User user = userRepository.findUserByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException
+						("user with email: " + email + " not found"));
+		String password = generateRandomSpecialCharacters(8);
+		String passwordBCrypt = passwordEncoder.encode(password);
+		user.setPassword(passwordBCrypt);
+		log.info("Password for user " +user.getEmail() + " was changed");
+		log.info("new password was send " +passwordBCrypt);
+		try {
+			emailService.sendSimpleMessage(email,"Восстановление пароля в соц сети!",
+					"Отправляем Вам уведомление об изменении " +
+							"пароля в нашей социальной сети \" Собутыльники \". " +
+							"Был изменен пароль для пользователя: " +user.getEmail() +
+							"Новый пароль для входа: " + password);
+		}catch (Exception ex) {
+			log.error(ex.getMessage());
+		}
+	}
+	public String generateRandomSpecialCharacters(int length) {
+		RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(33, 45)
+				.build();
+		return pwdGenerator.generate(length);
+	}
 }
