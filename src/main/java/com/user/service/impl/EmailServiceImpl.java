@@ -15,12 +15,6 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class EmailServiceImpl implements EmailService {
-    public String generateRandomSpecialCharacters(int length) {
-        RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(33, 45)
-                .build();
-        return pwdGenerator.generate(length);
-    }
-
     @Override
     public void emailConfirmmationWhehRegistered(String email, String uuid) {
     String text = "Уважаемый пользователь, Ваш емейл "+ email +" был предоставлен для регистрации " +
@@ -35,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
                 + "Емейл будет изменен с " + presentEmail + " на емейл " + futureEmail
                 + " Для подтверждения изменения введите на странице восстановления код: " + code;
 
-        String textForFutureEmail = "Уважаемый пользователь, Вы запросиили изменение емейла \"в социальной сети \\\"Собутыльники\\\" с "+ presentEmail +"."
+        String textForFutureEmail = "Уважаемый пользователь, Вы запросиили изменение емейла \"в социальной сети \"Собутыльники\" с "+ presentEmail +"."
                + "\nЕмейл будет изменен с " + presentEmail + " на емейл " + futureEmail + "."+
                  "\n Подтвердите действие перейдя по ссылке: \n " +
                 "http://5.63.154.191:8088/users/approve/change?uuid=" +uuid +"&futureEmail=" +futureEmail +"&presentEmail=" +presentEmail +".\n В случае отсутствия подтверждения емейла, емейл не будет изменен.";
