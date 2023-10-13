@@ -80,6 +80,8 @@ public class EmailConfirmationController {
           throw new ConfirmationCodeNotCorrect("Введен не верный код подтверждения");
        } else {
            userService.setEmail(presentEmail,futureEmail);
+           log.info("change email to: "+ futureEmail + " was confirmed by code from preveous email!" );
+
            Map <String,String> map = new HashMap<>();
            map.put("email",futureEmail);
            model.addAllAttributes(map);
@@ -99,12 +101,13 @@ public class EmailConfirmationController {
                                         @RequestParam Integer numberQuestion ) {
         log.info(answer);
         log.info(numberQuestion.toString());
-        //сравнение контрольныйх вовпросов
+        //сравнение контрольныйх впросов
 
         if (!userService.checkRecoveryQuestionAndAnswer(futureEmail,presentEmail,answer,numberQuestion)) {
             throw new ConfirmationCodeNotCorrect("Введен не верный ответ на контрольный вопрос" +
                     " или не правильно выбран контрольный вопрос!");
         } else {
+            log.info("Change email to: "+ futureEmail + " was confirmed by recovery question!" );
             Map <String,String> map = new HashMap<>();
             map.put("email",futureEmail);
             model.addAllAttributes(map);
