@@ -7,13 +7,14 @@ package com.user.controller;
         import lombok.RequiredArgsConstructor;
         import lombok.extern.slf4j.Slf4j;
         import org.springframework.http.MediaType;
+        import org.springframework.stereotype.Controller;
         import org.springframework.ui.Model;
         import org.springframework.web.bind.annotation.*;
 
         import java.util.HashMap;
         import java.util.Map;
 
-@RestController
+@Controller
 @Slf4j
 @RequestMapping("/api/v1/")
 @RequiredArgsConstructor
