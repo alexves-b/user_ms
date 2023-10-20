@@ -22,13 +22,15 @@ public class PasswordRecoveryController {
 
     private final UserServiceImpl userService;
 
-    @Operation(summary = "recovery password page",
+    @Operation(summary = "recovery password",
             description = "Обработка запроса на отправку нового пароля на емейл", tags = {"Auth service"})
     @RequestMapping(value = "/password/recovery/",
             produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public void sendNewPasswordToUser(@RequestBody RequestDtoChangeEmail dto) {
+    public String sendNewPasswordToUser(@RequestBody RequestDtoChangeEmail dto) {
         log.info("email for recovery: " + dto.getEmail().getEmail());
         userService.sendNewPasswordForUserEmail(dto.getEmail().getEmail());
+        //страничку вернуть? шаблон?
+        return "it works";
     }
     @Operation(summary = "view page for recovery password",
             description = "Отображение страницы для восстановления пароля по кодовому вопросу",
@@ -62,10 +64,5 @@ public class PasswordRecoveryController {
             model.addAllAttributes(map);
             return "recovery_approved";
         }
-        //сравнение контрольныйх вовпросов
-        //Поход в юзер сервис и получение по емейлу пользователя.
-        //Поход в таблицу Ответов и получение ответа по id пользователя.
-        //Передать в юзер сервис вопрос и ответ и получить либо 200 либо 500.
-
     }
 }
