@@ -12,7 +12,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan(basePackages = { "com.user.service.impl" })
 @PropertySource(value={"classpath:application.yaml"})
 public class EmailConfiguration {
 
