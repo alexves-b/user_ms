@@ -41,7 +41,7 @@ public class SecurityConfig {
 				.antMatchers("/api/v1/account**").permitAll()
 				.antMatchers("/api/v1/**").permitAll()
 				.anyRequest().permitAll()
-				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+				.and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				.and().exceptionHandling()
 				.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
 		return http.build();
