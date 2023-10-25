@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
 	private final AnwserRepository anwserRepository;
 	private final ConfirmationCode codeString;
 
-	String PROBLEM_PARSING_TOKEN = "problem with parsing token";
 
 
 
@@ -231,8 +230,8 @@ public class UserServiceImpl implements UserService {
 			Map<String, String> obj = mapper.readValue(jwtTokenUtils.decodeJWTToken(jwtToken), Map.class);
 			email = obj.get("sub");
 		} catch (Exception ex) {
-			log.error(PROBLEM_PARSING_TOKEN + " - " + ex.getMessage());
-			throw new RuntimeException(PROBLEM_PARSING_TOKEN);
+			log.error("problem with parsing token" + " - " + ex.getMessage());
+			throw new RuntimeException("problem with parsing token");
 		}
 		return email;
 	}
