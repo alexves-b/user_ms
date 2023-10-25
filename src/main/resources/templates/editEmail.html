@@ -16,6 +16,16 @@
         <h1>Выберите код, отправленный на емейл регистрации:</h1></div>
     <input type="text" name="code" required="required">
     <br><br>
+
+    <label for="email_code" >Старый емейл:</label>
+    <input type="text" th:value="${email}" name="presentEmail"  required="required" id="email_code">
+    <br><br>
+
+    <label for="future_email_code" >Новый емейл:</label>
+    <input type="text" th:value="${future_email}" name="futureEmail"  required="required" id="future_email_code">
+    <br><br>
+
+
     <input type="submit" name="submit_btn" value="Подтвердить изменение емейла">
 </form>
 
@@ -35,6 +45,15 @@
     <div>Ваш ответ:</div>
     <input type="text" name="answer" required="required">
     <br><br>
+
+    <label for="email" >Старый емейл:</label>
+    <input type="text" th:value="${email}" name="presentEmail"  required="required" id="email">
+    <br><br>
+
+    <label for="future_email" >Новый емейл:</label>
+    <input type="text" th:value="${future_email}" name="futureEmail"  required="required" id="future_email">
+    <br><br>
+
     <input type="submit" name="submit_btгn" value="Подтвердить изменение емейла">
 <br><br>
 </form>

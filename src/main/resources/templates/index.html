@@ -8,13 +8,11 @@
 
 <h1>Страничка для подтверждения Вашего емейла: (<span th:text="${email}"></span>)</h1>
 
-
-
-<form class="question_control_form" name="restore_password_form" method="post" action="/users/my_email/approve" >
+<form class="question_control_form" name="restore_password_form" method="post" action="/users/my_email/approve">
     <div class="guruweba_example_caption">
         <h1>Выберите контрольный вопрос, используемый при смене email <br> или восстановлении пароля!</h1></div>
-    <div class="guruweba_example_infofield">Вопрос?</div>
-    <select name="numberQuestion">
+    <label for="numberQuestion" >Вопрос?</label>
+    <select name="numberQuestion" id="numberQuestion" >
         <option value="1">Не выбрано.</option>
         <option value="2">Девичья фамилия матери?</option>
         <option value="3">Кличка Вашего питомца?</option>
@@ -22,8 +20,12 @@
         <option value="5">Любимый напиток?</option>
         <option value="6">Ваше мечта?</option>
     </select>
-    <div>Ответ</div>
-    <input type="text" name="answer" required="required">
+    <br><br>
+    <label for="answer" >Ответ</label>
+    <input type="text" name="answer"  required="required" id="answer">
+    <br><br>
+    <label for="email" >Ваш емейл:</label>
+    <input type="text" th:value="${email}" name="email"  required="required" id="email">
     <br><br>
     <input type="submit" name="submit_btгn" value="Отправить">
 <br><br>

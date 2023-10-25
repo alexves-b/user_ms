@@ -353,9 +353,9 @@ public class UserServiceImpl implements UserService {
 		return jsonObject.toMap();
 	}
 	@Transactional
-	public void addRecoveryQuestionAndConfirmEmail(UUID uuid,int numberOfQuestion, String answer) {
-		User user = (userRepository.findByUuidConfirmationEmail(uuid)
-				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
+	public void addRecoveryQuestionAndConfirmEmail(String email,int numberOfQuestion, String answer) {
+		User user = (userRepository.findUserByEmail(email)
+				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
 		user.setIsConfirmed(true);
 		user.setDateToConfirmation(null);
 		String answerEncrypted = passwordEncoder.encode(answer);
@@ -364,11 +364,18 @@ public class UserServiceImpl implements UserService {
 		//Добавить в таблицу id пользователя, id вопроса, и стринговый шифрованный ответ.
 		log.warn("user with email: " + user.getEmail() + " was confirmed");
 	}
-	public String getEmailByUUid(UUID uuid) {
+	public User getUserByUUid(UUID uuid) {
 		User user = (userRepository.findByUuidConfirmationEmail(uuid)
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
-		return user.getEmail();
+		return user;
 	}
+
+	public User getUserEntityByEmail(String email) {
+		User user = (userRepository.findUserByEmail(email)
+				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
+		return user;
+	}
+
 
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteNotConfirmedAccount() {

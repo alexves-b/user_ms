@@ -1,20 +1,16 @@
 package com.user.controller;
 
 import com.user.exception.ConfirmationCodeNotCorrect;
+import com.user.model.User;
 import com.user.service.impl.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -31,22 +27,15 @@ public class EmailConfirmationController {
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/approve/{uuid}",
             produces = MediaType.TEXT_HTML_VALUE, method = RequestMethod.GET)
-    public String PageConfirmationEmail(@PathVariable UUID uuid, Model model, HttpServletResponse response) {
+    public String PageConfirmationEmail(@PathVariable UUID uuid, Model model) {
         log.warn(uuid.toString());
-        String email = userService.getEmailByUUid(uuid);
-        Cookie cookie = new Cookie("user_uuid", uuid.toString());
-        cookie.setHttpOnly(true);
-        cookie.setDomain("localhost");
-        cookie.setPath("/my_email/approve");
-        cookie.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
+        User user = userService.getUserByUUid(uuid);
+        String email = user.getEmail();
         Map<String, String> map = new HashMap<>();
         map.put("email", email);
         model.addAllAttributes(map);
         return "index";
     }
-
-
 
     @Operation(summary = "confirmation email",
             description = "Ваш емейл подтвержден, отправка страницы", tags = {"Account service"})
@@ -55,25 +44,13 @@ public class EmailConfirmationController {
     public String confirmationEmail(Model model,
                                     @RequestParam String answer,
                                     @RequestParam Integer numberQuestion,
-                                    HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if(cookies !=null) {
-            for(Cookie c: cookies) {
-                System.out.println(c.getName() + " - " + c.getValue());
-            }
-        }
-        String userUuid = "7e4f8d1c-917d-4804-b2e4-a5bfef0d2967";
-        log.info(String.valueOf(userUuid));
+                                    @RequestParam String email) {
         Map<String, String> map = new HashMap<>();
-        String email = userService.getEmailByUUid(UUID.fromString(userUuid));
         map.put("email", email);
         model.addAllAttributes(map);
-        userService.addRecoveryQuestionAndConfirmEmail(UUID.fromString(userUuid), numberQuestion, answer);
+        userService.addRecoveryQuestionAndConfirmEmail(email, numberQuestion, answer);
         return "approved";
     }
-
-
-
 
     @Operation(summary = "return page for confirmation",
             description = "Страница подтверждерния изменения емейла", tags = {"Account service"})
@@ -82,15 +59,8 @@ public class EmailConfirmationController {
     public String pageChangeEmail(Model model,
                                   @RequestParam UUID uuid,
                                   @RequestParam String presentEmail,
-                                  @RequestParam String futureEmail,
-                                  HttpServletResponse response) {
+                                  @RequestParam String futureEmail) {
 
-        Cookie cookie = new Cookie("presentEmail", presentEmail);
-        cookie.setMaxAge(24 * 60 * 60); // expires in 1 day
-        Cookie cookie2 = new Cookie("futureEmail", futureEmail);
-        cookie2.setMaxAge(24 * 60 * 60);
-        response.addCookie(cookie);
-        response.addCookie(cookie2);
         Map<String, String> map = new HashMap<>();
         log.info("viev page edit email");
         map.put("email", presentEmail);
@@ -106,8 +76,8 @@ public class EmailConfirmationController {
             produces = MediaType.TEXT_HTML_VALUE, method = RequestMethod.GET)
     public String confirmationEditEmailByCode(Model model,
                                               @RequestParam String code,
-                                              @CookieValue(value = "presentEmail") String presentEmail,
-                                              @CookieValue(value = "futureEmail") String futureEmail) {
+                                              @RequestParam String presentEmail,
+                                              @RequestParam String futureEmail) {
         int codeFromString;
         try {
             codeFromString = Integer.parseInt(code);
@@ -130,7 +100,6 @@ public class EmailConfirmationController {
         }
     }
 
-
     @Operation(summary = "confirmation email",
             description = "Подтверждение емейла при регистрации", tags = {"Account service"})
     @RequestMapping(value = "/api/v1/code/approve/change_email", consumes = MediaType.ALL_VALUE,
@@ -138,8 +107,8 @@ public class EmailConfirmationController {
     public String confirmationEditEmailByUUID(Model model,
                                               @RequestParam String answer,
                                               @RequestParam Integer numberQuestion,
-                                              @CookieValue(value = "presentEmail") String presentEmail,
-                                              @CookieValue(value = "futureEmail") String futureEmail) {
+                                              @RequestParam String presentEmail,
+                                              @RequestParam String futureEmail) {
         log.info(answer);
         log.info(numberQuestion.toString());
         //сравнение контрольныйх впросов
