@@ -60,10 +60,13 @@ public class UserServiceImpl implements UserService {
 	private final AnwserRepository anwserRepository;
 	private final ConfirmationCode codeString;
 
+	String PROBLEM_PARSING_TOKEN = "problem with parsing token";
+
+
+
 	@Override
 	public AccountDto getUserByEmail(String email) {
-		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
-				new UsernameNotFoundException("user with email: " + email + " not found"));
+		User user = findUserByEmail(email);
 		log.info("user from repository: \n" + user);
 		return new AccountDto(user);
 	}
@@ -75,8 +78,9 @@ public class UserServiceImpl implements UserService {
 			throw new EmailIsBlank("email is blank");
 		}
 		if (userRepository.existsByEmail(accountSecureDto.getEmail())) {
-			log.warn("email: " + accountSecureDto.getEmail() + " not unique!");
-			throw new EmailNotUnique("email: " + accountSecureDto.getEmail() + " not unique!");
+			String emailNotUnique = "email: " + accountSecureDto.getEmail() + " not unique!";
+			log.warn(emailNotUnique);
+			throw new EmailNotUnique(emailNotUnique);
 		}
 		User user = User.builder().email(accountSecureDto.getEmail())
 				.firstName(accountSecureDto.getFirstName())
@@ -106,18 +110,11 @@ public class UserServiceImpl implements UserService {
 		changeUserDetails(oldUser, accountDto);
 		return oldUser;
 	}
-
 	@Override
 	public User editUser(AccountDto accountDto, String email) {
 		    accountDto.setEmail(email);
-		//Добавляем логку изменения емейла.
-		//Отправляем письмо о том, что емейл адрес изменен.
-		//По поводу емейла, надо проверять что отправка успешная.
-		//Если не успешная повторять 2 раза.
 			return editUser(accountDto);
 	}
-
-
 	@Override
 	public List<AccountDto> searchUser(String userFullName, String offset, String limit) {
 		if (userFullName.isBlank()) {
@@ -127,7 +124,6 @@ public class UserServiceImpl implements UserService {
 		String[] fullName = userFullName.split(" ");
 		String firstName;
 		String lastName;
-
 		if (fullName.length < 2) {
 			firstName = fullName[0];
 			lastName = fullName[0];
@@ -184,8 +180,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void markForDeleteUserAfterThirtyDaysByToken(String bearToken) {
 		String email = getEmailFromBearerToken(bearToken);
-		User user = (userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
+		User user = findUserByEmail(email);
 		user.setIsDeleted(true);
 		user.setDeletionDate(LocalDateTime.now().plusDays(30));
 		userRepository.save(user);
@@ -227,8 +222,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void unmarkForDeleteUserAfterThirtyDaysByToken(String bearToken) {
 		String email = getEmailFromBearerToken(bearToken);
-		User user = (userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
+		User user = findUserByEmail(email);
 		user.setIsDeleted(false);
 		user.setDeletionDate(null);
 	}
@@ -252,7 +246,8 @@ public class UserServiceImpl implements UserService {
 			Map<String, String> obj = mapper.readValue(jwtTokenUtils.decodeJWTToken(jwtToken), Map.class);
 			email = obj.get("sub");
 		} catch (Exception ex) {
-			log.error("problem with parsing jwt token: - " + ex.getMessage());
+			log.error(PROBLEM_PARSING_TOKEN + " - " + ex.getMessage());
+			throw new RuntimeException(PROBLEM_PARSING_TOKEN);
 		}
 		return email;
 	}
@@ -264,7 +259,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public AccountStatisticRequestDto getStatistic(AccountStatisticRequestDto accountStatisticRequestDto) {
 		return new AccountStatisticRequestDto();
-
 	}
 
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -275,36 +269,34 @@ public class UserServiceImpl implements UserService {
 	}
 	@Transactional
 	public AccountDto changeEmail(String email,String bearerToken) {
+		String massageError = "email: " + email + " not unique!";
 		String emailFromBearerToken = getEmailFromBearerToken(bearerToken);
-		User user = userRepository.findUserByEmail(emailFromBearerToken)
-				.orElseThrow(() -> new UsernameNotFoundException
-						("user with email: " + emailFromBearerToken + " not found"));
+		User user = findUserByEmail(emailFromBearerToken);
 		if (userRepository.existsByEmail(email)){
-			log.warn("email: " + email + " not unique!");
-			throw new EmailNotUnique("email: " + email + " not unique!");
+			log.warn(massageError);
+			throw new EmailNotUnique(massageError);
 		}
 		Integer code = Integer.parseInt(codeString.toString());
 		emailService.confirmationForChangeEmail(user.getEmail(),email,user.getUuidConfirmationEmail(),code);
-		//Добавляем проверку емейла. Отправляем письма. Если все норм - меняе емейл.
 		log.info(email);
-		//user.setEmail(email);
 		return new AccountDto(user);
+	}
+
+	public User findUserByEmail(String email) {
+		return userRepository.findUserByEmail(email)
+				.orElseThrow(() -> new UsernameNotFoundException
+						("user with email: " + email + " not found"));
 	}
 
 	@Transactional
 	public AccountDto changePassword(String password,String bearerToken) {
 		String passwordBCrypt = passwordEncoder.encode(password);
 		String email = getEmailFromBearerToken(bearerToken);
-		User user = userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException
-						("user with email: " + email + " not found"));
+		User user = findUserByEmail(email);
 		user.setPassword(passwordBCrypt);
 		log.info("Password for user " +user.getEmail() + " was changed");
 		try {
-			emailService.sendSimpleMessage(email,"Изменение пароля в соц сети!",
-					"Отправляем Вам уведомление об изменении " +
-							"пароля в нашей социальной сети \" Собутыльники \". " +
-							"Был изменен пароль для пользователя: " +user.getEmail());
+			emailService.notifyAboutChangePassword(email);
 		}catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
@@ -354,14 +346,12 @@ public class UserServiceImpl implements UserService {
 	}
 	@Transactional
 	public void addRecoveryQuestionAndConfirmEmail(String email,int numberOfQuestion, String answer) {
-		User user = (userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
+		User user = findUserByEmail(email);
 		user.setIsConfirmed(true);
 		user.setDateToConfirmation(null);
 		String answerEncrypted = passwordEncoder.encode(answer);
 		RecoveryAnswer recoveryAnswer = new RecoveryAnswer(numberOfQuestion,answerEncrypted,user);
 		anwserRepository.save(recoveryAnswer);
-		//Добавить в таблицу id пользователя, id вопроса, и стринговый шифрованный ответ.
 		log.warn("user with email: " + user.getEmail() + " was confirmed");
 	}
 	public User getUserByUUid(UUID uuid) {
@@ -369,13 +359,6 @@ public class UserServiceImpl implements UserService {
 				.orElseThrow(() -> new NotFoundException("user with uuid: " + uuid + " not found")));
 		return user;
 	}
-
-	public User getUserEntityByEmail(String email) {
-		User user = (userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new NotFoundException("user with email: " + email + " not found")));
-		return user;
-	}
-
 
 	@Scheduled(cron = "0 0 0 * * ?")
 	public void deleteNotConfirmedAccount() {
@@ -393,53 +376,39 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public boolean checkConfirmationCode(Integer code) {
-		log.info("Правильный код:"+ codeString.toString());
 		int correctCode = Integer.parseInt(String.valueOf(codeString));
-
         return correctCode == code;
 	}
 
 	@Transactional
 	public boolean checkRecoveryQuestionAndAnswer(String email, String answer, Integer numberOfQuestion) {
-		User user = userRepository.findUserByEmail(email).orElseThrow(() ->
-				new UsernameNotFoundException("user with email: " + email + " not found"));
+		User user = findUserByEmail(email);
 		Long userId = user.getId();
 		RecoveryAnswer recoveryAnswer = anwserRepository.findAnswerByUserId(userId).orElseThrow(() ->
-				new UserRecoveryAnswerNotFound("answer with id: " + userId + " not found"));
+				new UserRecoveryAnswerNotFound("answer with user_id: " + userId + " not found"));
 
 		boolean compareAnswer = passwordEncoder.matches(answer,recoveryAnswer.getAnswerEncrypted());
 		boolean compareQuestions = recoveryAnswer.getNumberQuestion() == numberOfQuestion;
 
-		if (compareAnswer && compareQuestions) {
-			return  true;
-		}
-		return false;
-	}
+        return compareAnswer & compareQuestions;
+    }
 
 	@Transactional
 	public void setEmail(String oldEmail,String changedEmail) {
-		User user = userRepository.findUserByEmail(oldEmail).orElseThrow(() ->
-				new UsernameNotFoundException("user with email: " + oldEmail + " not found"));
+		User user = findUserByEmail(oldEmail);
 		user.setEmail(changedEmail);
 	}
 
 	@Transactional
 	public void sendNewPasswordForUserEmail(String email) {
-		User user = userRepository.findUserByEmail(email)
-				.orElseThrow(() -> new UsernameNotFoundException
-						("user with email: " + email + " not found"));
+		User user = findUserByEmail(email);
 		String password = generateRandomSpecialCharacters(8);
 		String passwordBCrypt = passwordEncoder.encode(password);
 
 		try {
-			emailService.sendSimpleMessage(email,"Восстановление пароля в соц сети!",
-					"Отправляем Вам уведомление об изменении " +
-							"пароля в нашей социальной сети \" Собутыльники \". " +
-							"Был изменен пароль для пользователя: " +user.getEmail() +
-							" Новый пароль для входа: " + password);
+			emailService.sendMessageAboutNewPasswordByEmail(email,password);
 			user.setPassword(passwordBCrypt);
 			log.info("Password for user " +user.getEmail() + " was changed");
-			log.info("new password was send " +passwordBCrypt);
 		}catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
@@ -447,27 +416,20 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	public void sendNewPasswordForNewUserEmail(String oldEmail,String emailToSend) {
-		User user = userRepository.findUserByEmail(oldEmail)
-				.orElseThrow(() -> new UsernameNotFoundException
-						("user with email: " + oldEmail + " not found"));
+		User user = findUserByEmail(oldEmail);
 		String password = generateRandomSpecialCharacters(8);
 		String passwordBCrypt = passwordEncoder.encode(password);
 
 		try {
-			emailService.sendSimpleMessage(emailToSend,"Восстановление пароля в соц сети!",
-					"Отправляем Вам уведомление об изменении " +
-							"пароля в нашей социальной сети \" Собутыльники \". " +
-							"Был изменен пароль для пользователя: " +user.getEmail() +
-							" Новый пароль для входа: " + password);
+			emailService.sendMessageAboutNewPasswordByEmail(emailToSend,password);
 			user.setPassword(passwordBCrypt);
-			log.info("Password for user " +user.getEmail() + " was changed");
-			log.info("new password was send " +passwordBCrypt);
+			log.info("Password for user " +user.getEmail() + " was changed and send to emal: " + emailToSend);
 		}catch (Exception ex) {
 			log.error(ex.getMessage());
 		}
 	}
 	public String generateRandomSpecialCharacters(int length) {
-		RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(33, 45)
+		RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(1, 500)
 				.build();
 		return pwdGenerator.generate(length);
 	}

@@ -36,6 +36,24 @@ public class EmailServiceImpl implements EmailService {
         sendSimpleMessage(presentEmail, "Подтверждение емейла", textForPresentEmail);
         sendSimpleMessage(futureEmail, "Подтверждение емейла", textForFutureEmail);
     }
+
+
+    public void notifyAboutChangePassword(String email){
+        sendSimpleMessage(email,"Изменение пароля в соц сети!",
+                "Отправляем Вам уведомление об изменении " +
+                        "пароля в нашей социальной сети \" Собутыльники \". " +
+                        "Был изменен пароль для пользователя: " +email);
+    }
+    public void sendMessageAboutNewPasswordByEmail(String email,String password){
+        sendSimpleMessage(email,"Восстановление пароля в соц сети!",
+                "Отправляем Вам уведомление об изменении " +
+                        "пароля в нашей социальной сети \" Собутыльники \". " +
+                        "Был изменен пароль для пользователя: " + email +
+                        " Новый пароль для входа: " + password);
+    }
+
+
+
     @Value("${spring.mail.username}")
     private String mailServerUsername;
     @Autowired
