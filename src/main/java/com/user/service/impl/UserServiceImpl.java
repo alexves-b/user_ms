@@ -1,5 +1,8 @@
 package com.user.service.impl;
 
+import com.demo.storage.notifications.ENotificationType;
+import com.demo.storage.notifications.EServiceName;
+import com.demo.storage.notifications.NotificationCommonDto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,8 +11,6 @@ import com.user.dto.ConfirmationCode;
 import com.user.dto.account.AccountDto;
 import com.user.dto.account.AccountForFriends;
 import com.user.dto.account.AccountStatisticRequestDto;
-import com.user.dto.kafka.CommonNotifyDto;
-import com.user.dto.kafka.CommonNotifyTypeEnum;
 import com.user.dto.secure.AccountSecureDto;
 import com.user.exception.EmailIsBlank;
 import com.user.exception.EmailNotUnique;
@@ -39,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -160,10 +162,16 @@ public class UserServiceImpl implements UserService {
 				new UsernameNotFoundException("user with id: " + id + " not found"));
 
 		String emailForDel = userRepository.findById(id).orElseThrow().getEmail();
-		CommonNotifyDto commonNotifyDto = new CommonNotifyDto(
-				String.format("Пользователь с email '%s' удален", emailForDel),
-				CommonNotifyTypeEnum.DEL_USER);
-		kafkaProducer.produceKafkaMessage(commonNotifyDto);
+		NotificationCommonDto delNotify = NotificationCommonDto.builder()
+				.producerId(id)
+				.service(EServiceName.USERS)
+				.notificationType(ENotificationType.DEL_USER)
+				.timestamp(new Timestamp(System.currentTimeMillis()))
+				.content(String.format("Пользователь с email '%s' удален", emailForDel))
+				.build();
+
+		kafkaProducer.produceKafkaMessage("notify-topic-common", delNotify);
+
 		log.info("user with id: " + id + " was deleted.");
 		return userRepository.deleteUserById(id);
 	}
@@ -176,10 +184,17 @@ public class UserServiceImpl implements UserService {
 		user.setDeletionDate(LocalDateTime.now().plusDays(30));
 		userRepository.save(user);
 
-		CommonNotifyDto commonNotifyDto = new CommonNotifyDto(
-				String.format("Пользователь с email '%s' пометил свой аккаунт для удаления", email),
-				CommonNotifyTypeEnum.MARK_DEL_USER);
-		kafkaProducer.produceKafkaMessage(commonNotifyDto);
+		String emailForDel = user.getEmail();
+
+		NotificationCommonDto delNotify = NotificationCommonDto.builder()
+				.producerId(user.getId())
+				.service(EServiceName.USERS)
+				.notificationType(ENotificationType.DEL_USER)
+				.timestamp(new Timestamp(System.currentTimeMillis()))
+				.content(String.format("Пользователь с email '%s' удален", emailForDel))
+				.build();
+
+		kafkaProducer.produceKafkaMessage("notify-topic-common", delNotify);
 	}
 
 	@Scheduled(cron = "0 0 0 * * ?")
