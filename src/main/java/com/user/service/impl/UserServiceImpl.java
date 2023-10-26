@@ -59,10 +59,7 @@ public class UserServiceImpl implements UserService {
 	private final EmailServiceImpl emailService;
 	private final AnwserRepository anwserRepository;
 	private final ConfirmationCode codeString;
-
-
-
-
+	
 	@Override
 	public AccountDto getUserByEmail(String email) {
 		User user = findUserByEmail(email);
