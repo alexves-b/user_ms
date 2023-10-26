@@ -31,6 +31,15 @@ public class PasswordRecoveryController {
         userService.sendNewPasswordForUserEmail(dto.getEmail().getEmail());
     }
 
+    @Operation(summary = "recovery password",
+            description = "Обработка запроса на отправку нового пароля на емейл", tags = {"Auth service"})
+    @RequestMapping(value = "/password/recovery/",
+            produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public String viev(@RequestBody RequestDtoChangeEmail dto) {
+       log.info("recovery sucsessful");
+       return "succsess";
+    }
+
     @Operation(summary = "view page for recovery password",
             description = "Отображение страницы для восстановления пароля по кодовому вопросу",
             tags = {"Auth service"})
