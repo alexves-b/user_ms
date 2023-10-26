@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <title>Welcome</title>
 </head>
-<body>
+<body bgcolor="#2C8F59">
 
-<h1>Страничка для подтверждения Вашего емейла: (<span th:text="${email}"></span>)</h1>
+    <p dir="ltr"><font size="6" color= "#fff">
+        <h1>Страничка для подтверждения Вашего емейла: (<span th:text="${email}"></span>)</h1>
+        <br><br>
+        Выберите контрольный вопрос, используемый при смене email
+        <br> или восстановлении пароля!</div></font></p>
+
+
 
 <form class="question_control_form" name="restore_password_form" method="post" action="/users/my_email/approve">
     <div class="guruweba_example_caption">
-        <h1>Выберите контрольный вопрос, используемый при смене email <br> или восстановлении пароля!</h1></div>
-    <label for="numberQuestion" >Вопрос?</label>
+
+    <label for="numberQuestion" ><p dir="ltr"><font size="6" color= "#fff">Вопрос?</font></p></label>
     <select name="numberQuestion" id="numberQuestion" >
         <option value="1">Не выбрано.</option>
         <option value="2">Девичья фамилия матери?</option>
@@ -21,14 +28,15 @@
         <option value="6">Ваше мечта?</option>
     </select>
     <br><br>
-    <label for="answer" >Ответ</label>
+    <label for="answer" > <p dir="ltr"><font size="6" color= "#fff">Ответ:</font></p></label>
     <input type="text" name="answer"  required="required" id="answer">
     <br><br>
-    <label for="email" >Ваш емейл:</label>
+    <label for="email" > <p dir="ltr"><font size="6" color= "#fff">Ваш емейл:</font></p></label>
     <input type="text" th:value="${email}" name="email"  required="required" id="email">
     <br><br>
     <input type="submit" name="submit_btгn" value="Отправить">
 <br><br>
+        </div>
 </form>
 </body>
 </html>

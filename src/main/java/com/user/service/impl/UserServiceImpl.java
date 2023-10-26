@@ -410,7 +410,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 	public String generateRandomSpecialCharacters(int length) {
-		RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(1, 500)
+		RandomStringGenerator pwdGenerator = new RandomStringGenerator.Builder().withinRange(33, 125)
 				.build();
 		return pwdGenerator.generate(length);
 	}
